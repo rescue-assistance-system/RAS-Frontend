@@ -6,9 +6,18 @@ const useSidebarStore = create((set) => ({
 
   toggleSidebar: () => set((state) => ({ isOpen: !state.isOpen })),
 
-  isLoggedIn: false,
-  login: () => set({ isLoggedIn: true }),
-  logout: () => set({ isLoggedIn: false }),
+  isLoggedIn: !!localStorage.getItem('token'),
+
+  login: (token) => {
+    localStorage.setItem('token', token);
+    set({ isLoggedIn: true });
+  },
+
+  logout: () => {
+    localStorage.removeItem('token');
+    set({ isLoggedIn: false });
+  },
+
   toggleMenu: (menuId) =>
     set((state) => ({
       openMenus: {

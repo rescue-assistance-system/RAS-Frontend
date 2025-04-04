@@ -2,12 +2,13 @@ import React from 'react';
 import 'boxicons/css/boxicons.min.css';
 import avatar from '../../assets/sos_login.jpg';
 import useSidebarStore from '../../stores/sidebarStore';
+
 const Header = () => {
   const { isOpen } = useSidebarStore();
   return (
     <header
-      className={`transition-all duration-300 bg-gray-50 p-3 shadow-lg ${
-        isOpen ? 'pl-60' : 'pl-24'
+      className={`fixed top-0 right-0 transition-all duration-300 bg-gray-50 p-3 shadow-lg z-50 ${
+        isOpen ? 'left-54 pl-6' : 'left-22 pl-2'
       }`}
     >
       <div className="flex items-center ">
@@ -116,7 +117,6 @@ const Header = () => {
                       <span className="text-xs text-gray-400">14 Sec ago</span>
                     </div>
                   </a>
-                  {/* Thêm các mục thông báo khác nếu cần */}
                 </div>
                 <div className="p-3 text-center border-t">
                   <a

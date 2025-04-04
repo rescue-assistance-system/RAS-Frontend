@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import useSidebarStore from '../../stores/sidebarStore';
 
 const Sidebar = () => {
@@ -35,101 +36,76 @@ const Sidebar = () => {
       {isOpen && (
         <ul className="p-2 space-y-2">
           <li>
-            <button
-              onClick={() => toggleMenu('dashboard')}
-              className="flex items-center justify-between w-full p-2 rounded-lg border border-gray-300 hover:border-blue-500 hover:bg-blue-100 transition-all"
+            <Link
+              to="/dashboard"
+              className="flex items-center p-2 rounded-lg hover:bg-blue-200 hover:text-blue-500 transition-all ml-3.5"
             >
-              <div className="flex items-center  text-gray-800">
-                <i className="bx bx-home-circle text-xl mr-3"></i>
-                <span className="text-sm">Dashboard</span>
-              </div>
-              <i className="bx bx-chevron-down"></i>
-            </button>
-            {openMenus['dashboard'] && (
-              <ul className="pl-8 mt-1 space-y-1">
-                <li>
-                  <a
-                    href=""
-                    className="flex items-center p-2 rounded-lg hover:bg-gray-600"
-                  >
-                    <i className="bx bx-right-arrow-alt mr-2"></i>
-                    Default
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href=""
-                    className="flex items-center p-2 rounded-lg hover:bg-gray-600"
-                  >
-                    <i className="bx bx-right-arrow-alt mr-2"></i>
-                    Alternate
-                  </a>
-                </li>
-              </ul>
-            )}
+              <i className="bx bx-home-circle text-xl mr-3"></i>
+              <span className="text-sm">Dashboard</span>
+            </Link>
           </li>
 
           <li>
             <button
               onClick={() => toggleMenu('application')}
-              className="flex items-center justify-between w-full p-2 rounded-lg hover:bg-gray-700 transition-colors"
+              className="flex items-center justify-between w-full p-2 rounded-lg hover:bg-blue-200 transition-colors"
             >
               <div className="flex items-center  text-gray-800">
-                <i className="bx bx-news text-xl mr-3"></i>
-                <span className="text-sm"> News</span>
+                <i className="bx bx-news text-xl mr-4 ml-3"></i>
+                <span className="text-sm font-semibold "> News</span>
               </div>
               <i className="bx bx-chevron-down"></i>
             </button>
             {openMenus['application'] && (
               <ul className="pl-8 mt-1 space-y-1">
                 <li>
-                  <a
-                    href=""
-                    className="flex items-center p-2 rounded-lg hover:bg-gray-600"
+                  <Link
+                    to="/news/news-emergency"
+                    className="flex items-center p-2 rounded-lg hover:bg-blue-200 text-sm"
                   >
                     <i className="bx bx-right-arrow-alt mr-2"></i>
-                    Email
-                  </a>
+                    News Emergency
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href=""
-                    className="flex items-center p-2 rounded-lg hover:bg-gray-600"
+                  <Link
+                    to="/news/first-aid"
+                    className="flex items-center p-2 rounded-lg hover:bg-blue-200 text-sm"
                   >
                     <i className="bx bx-right-arrow-alt mr-2"></i>
-                    Chat Box
-                  </a>
+                    First Aid
+                  </Link>
                 </li>
               </ul>
             )}
           </li>
 
           <li>
-            <a
-              href=""
+            <Link
+              to="/rescue-teams"
               className="flex items-center p-2 rounded-lg hover:bg-blue-200 hover:text-blue-500 transition-all ml-3.5"
             >
               <i className="bx bx-group text-xl mr-3"></i>
               <span className="text-sm ">Rescue Teams</span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              href=""
+            <Link
+              to="/analytics"
               className="flex items-center p-2 rounded-lg hover:bg-blue-200 hover:text-blue-500 transition-all ml-3.5"
             >
               <i className="bx bx-bar-chart-alt text-xl mr-3"></i>
               <span className="text-sm">Analytics</span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              href=""
+            <Link
+              to="/user-management"
               className="flex items-center p-2 rounded-lg hover:bg-blue-200 hover:text-blue-500 transition-all ml-3.5"
             >
               <i className="bx bx-user text-xl mr-3"></i>
               <span className="text-sm">User Management</span>
-            </a>
+            </Link>
           </li>
 
           <li>
@@ -146,13 +122,13 @@ const Sidebar = () => {
             {openMenus['ecommerce'] && (
               <ul className="pl-8 mt-1 space-y-1">
                 <li>
-                  <a
-                    href=""
+                  <Link
+                    to="/settings/products"
                     className="flex items-center p-2 rounded-lg hover:bg-gray-600"
                   >
                     <i className="bx bx-right-arrow-alt mr-2"></i>
                     Products
-                  </a>
+                  </Link>
                 </li>
               </ul>
             )}
@@ -163,28 +139,36 @@ const Sidebar = () => {
       {!isOpen && (
         <ul className="p-4 space-y-4">
           <li>
-            <i
-              className="bx bx-home-circle text-xl cursor-pointer hover:text-gray-600"
-              title="Dashboard"
-            ></i>
+            <Link to="/dashboard">
+              <i
+                className="bx bx-home-circle text-xl cursor-pointer hover:text-gray-600"
+                title="Dashboard"
+              ></i>
+            </Link>
           </li>
           <li>
-            <i
-              className="bx bx-category text-xl cursor-pointer hover:text-gray-600"
-              title="Application"
-            ></i>
+            <Link to="/news">
+              <i
+                className="bx bx-category text-xl cursor-pointer hover:text-gray-600"
+                title="News"
+              ></i>
+            </Link>
           </li>
           <li>
-            <i
-              className="bx bx-cookie text-xl cursor-pointer hover:text-gray-600"
-              title="Widgets"
-            ></i>
+            <Link to="/rescue-teams">
+              <i
+                className="bx bx-group text-xl cursor-pointer hover:text-gray-600"
+                title="Rescue Teams"
+              ></i>
+            </Link>
           </li>
           <li>
-            <i
-              className="bx bx-cart text-xl cursor-pointer hover:text-gray-600"
-              title="eCommerce"
-            ></i>
+            <Link to="/analytics">
+              <i
+                className="bx bx-bar-chart-alt text-xl cursor-pointer hover:text-gray-600"
+                title="Analytics"
+              ></i>
+            </Link>
           </li>
         </ul>
       )}
