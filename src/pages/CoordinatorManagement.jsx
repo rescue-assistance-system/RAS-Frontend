@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import RescueTeamForm from '../components/admin/Form/CreateAccount';
+import React, { useState } from 'react';
+import CreateAccountForm from '../components/admin/Form/CreateAccount';
 import { Dialog } from '@headlessui/react';
 import RescueTeamDetail from '../components/admin/Form/RescueTeamDetailForm';
-import rescueTeamService from '../services/rescueTeam.service';
-
-const RescueTeamManagement = () => {
+const CoordinatorManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const handleCreateTeam = (newTeam) => {
     console.log('New team created:', newTeam);
@@ -12,11 +10,33 @@ const RescueTeamManagement = () => {
   };
   const [selectedTeamId, setSelectedTeamId] = useState(null);
   const [isViewingDetails, setIsViewingDetails] = useState(false);
-  const handleViewDetails = (teamId) => {
-    setSelectedTeamId(teamId);
-    setIsViewingDetails(true);
-  };
 
+  const teams = [
+    {
+      id: 'RT-000354',
+      teamName: 'Alpha Rescue',
+      status: 'AVAILABLE',
+      location: 'District 1',
+      date: 'June 10, 2023',
+      members: 5,
+    },
+    {
+      id: 'RT-000986',
+      teamName: 'Beta Response',
+      status: 'ON_MISSION',
+      location: 'District 2',
+      date: 'June 12, 2023',
+      members: 4,
+    },
+    {
+      id: 'RT-000536',
+      teamName: 'Delta Force',
+      status: 'STANDBY',
+      location: 'District 3',
+      date: 'June 14, 2023',
+      members: 6,
+    },
+  ];
 
   const getStatusBadge = (status) => {
     const statusStyles = {
@@ -27,27 +47,6 @@ const RescueTeamManagement = () => {
     return `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyles[status] || 'bg-gray-100'}`;
   };
 
-  const [rescueTeams, setRescueTeams] = useState([]);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await rescueTeamService.getAllRescueTeams();
-        const filtered = data.map((user) => ({
-          id: user.id,
-          teamName: user.username,
-          email: user.email,
-          status: user.status,
-          role: user.role, 
-          date: user.date,
-        }));
-        console.log("filtered", filtered);
-        setRescueTeams(filtered);
-      } catch (error) {
-        console.error('Error fetching rescue teams:', error);
-      }
-    };
-    fetchData();
-  }, []);
   return (
     <>
       {isViewingDetails ? (
@@ -57,20 +56,18 @@ const RescueTeamManagement = () => {
         />
       ) : (
         <div className="p-6">
-          {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-semibold text-gray-900">
-              Rescue Teams
+              Coordinators
             </h2>
             <button
               onClick={() => setIsModalOpen(true)}
               className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
             >
-              Add New
+              Add New 
             </button>
           </div>
 
-          {/* Search and Filter */}
           <div className="flex gap-4 mb-6">
             <div className="flex-1">
               <input
@@ -98,10 +95,10 @@ const RescueTeamManagement = () => {
                     />
                   </th>
                   <th className="px-8 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Team ID
+                    Coordinator ID
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Team Name
+                    Coordinator Name
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
@@ -110,19 +107,19 @@ const RescueTeamManagement = () => {
                     Location
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Email
+                    Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     View Details
-                  </th>
+                  </th> */}
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {rescueTeams.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
+                {teams.map((team) => (
+                  <tr key={team.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <input
                         type="checkbox"
@@ -130,29 +127,21 @@ const RescueTeamManagement = () => {
                       />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {user.id}
+                      {team.id}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {user.teamName}
+                      {team.teamName}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={getStatusBadge(user.status)}>
-                        {user.status}
+                      <span className={getStatusBadge(team.status)}>
+                        {team.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {user.role}
+                      {team.location}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {user.email}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <button
-                        onClick={() => handleViewDetails(user.id)}
-                        className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600"
-                      >
-                        View Details
-                      </button>
+                      {team.date}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <div className="flex gap-2">
@@ -213,12 +202,12 @@ const RescueTeamManagement = () => {
           >
             <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
-            {/* Full-screen container for centering */}
             <div className="fixed inset-0 flex items-center justify-center p-4">
               <Dialog.Panel className="bg-white rounded-lg shadow-xl">
-                <RescueTeamForm
+                <CreateAccountForm
                   onClose={() => setIsModalOpen(false)}
                   onSuccess={handleCreateTeam}
+                  accountType="COORDINATOR"
                 />
               </Dialog.Panel>
             </div>
@@ -229,4 +218,4 @@ const RescueTeamManagement = () => {
   );
 };
 
-export default RescueTeamManagement;
+export default CoordinatorManagement;

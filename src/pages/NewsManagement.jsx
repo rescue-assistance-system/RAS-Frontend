@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { PlusCircle, Search } from 'lucide-react';
 
-import NewsForm from './NewsForm';
+import NewsForm from '../components/admin/Form/NewsForm';
 import NewsCard from '../components/admin/Card/NewsCard';
 
 const NewsManagement = () => {
@@ -39,7 +39,8 @@ const NewsManagement = () => {
       description:
         'A powerful earthquake measuring 7.2 on the Richter scale has struck the coastal region...',
       category: 'Disaster',
-      image: 'https://example.com/earthquake.jpg',
+      image:
+        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
       status: 'Published',
       time: '3 hours ago',
     },
@@ -49,7 +50,8 @@ const NewsManagement = () => {
       description:
         'Continuous heavy rainfall has led to severe flooding in several low-lying areas...',
       category: 'Weather',
-      image: 'https://example.com/flooding.jpg',
+      image:
+        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
       status: 'Published',
       time: '4 hours ago',
     },
@@ -59,7 +61,8 @@ const NewsManagement = () => {
       description:
         'A multi-vehicle collision has occurred on the main highway during rush hour...',
       category: 'Accident',
-      image: 'https://example.com/accident.jpg',
+      image:
+        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
       status: 'Draft',
       time: '5 hours ago',
     },
@@ -69,7 +72,8 @@ const NewsManagement = () => {
       description:
         'Meteorologists have issued a warning for an approaching tropical storm...',
       category: 'Weather',
-      image: 'https://example.com/storm.jpg',
+      image:
+        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
       status: 'Published',
       time: '6 hours ago',
     },
@@ -79,7 +83,8 @@ const NewsManagement = () => {
       description:
         'A massive landslide has blocked the main road connecting two cities...',
       category: 'Disaster',
-      image: 'https://example.com/landslide.jpg',
+      image:
+        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
       status: 'Published',
       time: '7 hours ago',
     },
@@ -89,7 +94,8 @@ const NewsManagement = () => {
       description:
         'An explosion has occurred at a chemical factory in the industrial zone...',
       category: 'Accident',
-      image: 'https://example.com/factory.jpg',
+      image:
+        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
       status: 'Draft',
       time: '8 hours ago',
     },
@@ -99,7 +105,8 @@ const NewsManagement = () => {
       description:
         'The region is experiencing its hottest temperatures in recorded history...',
       category: 'Weather',
-      image: 'https://example.com/heatwave.jpg',
+      image:
+        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
       status: 'Published',
       time: '9 hours ago',
     },
@@ -109,7 +116,8 @@ const NewsManagement = () => {
       description:
         'Authorities are investigating the cause of a major bridge collapse...',
       category: 'Accident',
-      image: 'https://example.com/bridge.jpg',
+      image:
+        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
       status: 'Draft',
       time: '10 hours ago',
     },
@@ -119,7 +127,8 @@ const NewsManagement = () => {
       description:
         'A large forest fire is spreading rapidly due to strong winds...',
       category: 'Disaster',
-      image: 'https://example.com/fire.jpg',
+      image:
+        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
       status: 'Published',
       time: '11 hours ago',
     },
@@ -140,7 +149,8 @@ const NewsManagement = () => {
       description:
         'The region is experiencing its hottest temperatures in recorded history...',
       category: 'Weather',
-      image: 'https://example.com/heatwave.jpg',
+      image:
+        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
       status: 'Published',
       time: '9 hours ago',
     },
@@ -150,7 +160,8 @@ const NewsManagement = () => {
       description:
         'Authorities are investigating the cause of a major bridge collapse...',
       category: 'Accident',
-      image: 'https://example.com/bridge.jpg',
+      image:
+        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
       status: 'Draft',
       time: '10 hours ago',
     },
@@ -160,7 +171,8 @@ const NewsManagement = () => {
       description:
         'A large forest fire is spreading rapidly due to strong winds...',
       category: 'Disaster',
-      image: 'https://example.com/fire.jpg',
+      image:
+        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
       status: 'Published',
       time: '11 hours ago',
     },
@@ -204,8 +216,8 @@ const NewsManagement = () => {
       const updatedNews = {
         ...newsData,
         id: editingNews.id,
-        time: editingNews.time, 
-        image: newsData.images?.[0] || editingNews.image, 
+        time: editingNews.time,
+        image: newsData.images?.[0] || editingNews.image,
       };
       setNewsItems(
         newsItems.map((item) =>
@@ -228,20 +240,20 @@ const NewsManagement = () => {
   const handleEdit = (news) => {
     const newsForEdit = {
       ...news,
-      images: [news.image], 
-        };
+      images: [news.image],
+    };
     setEditingNews(newsForEdit);
     setShowForm(true);
   };
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
   const handleSortChange = (e) => {
     setSortBy(e.target.value);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
   const [currentPage, setCurrentPage] = useState(1);

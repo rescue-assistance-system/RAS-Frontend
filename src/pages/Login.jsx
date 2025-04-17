@@ -1,23 +1,25 @@
 import React from 'react';
 import { useState } from 'react';
 import { Bell, Mail, Lock } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import sos from '../assets/sos_login.jpg';
-import useSidebarStore from '../stores/sidebarStore';
+import useAuthStore from '../stores/authStore';
+import { useNavigate } from 'react-router-dom';
+
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login, isLoading, error } = useAuthStore();
+  const deviceId = 'iphone12';
   const navigate = useNavigate();
-  const login = useSidebarStore((state) => state.login);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Login attempt with:', { email, password });
-    if (email === 'tiendatpot@gmail.com' && password === 'password') {
-      login();
-      navigate('/');
-    } else {
-      alert('Invalid username or password');
+    try {
+      await login(email, password, deviceId);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Login failed:', error);
     }
   };
 
@@ -97,10 +99,12 @@ export default function LoginPage() {
 
             <button
               type="submit"
+              disabled={isLoading}
               className="w-full bg-white text-red-500 font-medium py-3 rounded hover:bg-red-100 transition-colors"
             >
-              Submit
+              {isLoading ? 'Logging in...' : 'Submit'}
             </button>
+            {error && <p className="text-red-500">{error}</p>}
           </form>
         </div>
       </div>

@@ -79,16 +79,41 @@ const Sidebar = () => {
               </ul>
             )}
           </li>
-
           <li>
-            <Link
-              to="/rescue-teams"
-              className="flex items-center p-2 rounded-lg hover:bg-blue-200 hover:text-blue-500 transition-all ml-3.5"
+            <button
+              onClick={() => toggleMenu('accounts')}
+              className="flex items-center justify-between w-full p-2 rounded-lg hover:bg-blue-200 transition-colors"
             >
-              <i className="bx bx-group text-xl mr-3"></i>
-              <span className="text-sm ">Rescue Teams</span>
-            </Link>
+              <div className="flex items-center  text-gray-800">
+                <i className="bx bx-group text-xl mr-4 ml-3"></i>
+                <span className="text-sm font-semibold "> Accounts</span>
+              </div>
+              <i className="bx bx-chevron-down"></i>
+            </button>
+            {openMenus['accounts'] && (
+              <ul className="pl-8 mt-1 space-y-1">
+                <li>
+                  <Link
+                    to="/rescue-teams"
+                    className="flex items-center p-2 rounded-lg hover:bg-blue-200 text-sm"
+                  >
+                    <i className="bx bx-right-arrow-alt mr-2"></i>
+                    Rescue Teams
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/coordinators"
+                    className="flex items-center p-2 rounded-lg hover:bg-blue-200 text-sm"
+                  >
+                    <i className="bx bx-right-arrow-alt mr-2"></i>
+                    Coordinators
+                  </Link>
+                </li>
+              </ul>
+            )}
           </li>
+
           <li>
             <Link
               to="/analytics"

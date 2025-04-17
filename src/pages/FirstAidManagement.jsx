@@ -19,7 +19,8 @@ const FirstAidManagement = () => {
       description:
         'Learn the essential steps of CPR for adults, including chest compressions and rescue breaths.',
       category: 'CPR',
-      image: '/images/cpr.jpg',
+      image:
+        'https://cdn.img.gen.in/assets/Business/2665/Feeds/7523/2665_638470032857101790117528.jpg?rendered=true',
       status: 'Published',
       time: '2 days ago',
       symptoms: ['Unconsciousness', 'No breathing', 'No pulse'],
@@ -30,7 +31,7 @@ const FirstAidManagement = () => {
       description:
         'How to properly treat first and second-degree burns using proper first aid techniques.',
       category: 'Wounds & Injuries',
-      image: '/images/burns.jpg',
+      image: 'https://pbs.twimg.com/media/Ew0hrvnUYAI2BSf.jpg',
       status: 'Published',
       time: '1 week ago',
       symptoms: ['Redness', 'Pain', 'Blistering'],
@@ -41,7 +42,7 @@ const FirstAidManagement = () => {
       description:
         'Quick guide on how to respond to choking emergencies in adults and children.',
       category: 'Breathing',
-      image: '/images/choking.jpg',
+      image: 'https://pbs.twimg.com/media/Ew0hrvnUYAI2BSf.jpg',
       status: 'Draft',
       time: '3 hours ago',
       symptoms: ['Difficulty breathing', 'Coughing', 'Inability to speak'],
@@ -80,7 +81,6 @@ const FirstAidManagement = () => {
         ),
       );
     } else {
-      // Add new guide
       setFirstAidGuides([
         ...firstAidGuides,
         {
