@@ -1,10 +1,14 @@
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
+import { useEffect } from 'react';
+import rescueTeamService from '../../../services/rescueTeam.service';
+import coordinatorService from '../../../services/coordinator.service';
 
 const CreateAccountForm = ({
   onClose,
   onSuccess,
   accountType = 'RESCUE_TEAM',
+  isEditMode = false,
+  defaultValues = null,
 }) => {
   const {
     register,
@@ -12,6 +16,7 @@ const CreateAccountForm = ({
     formState: { errors, isSubmitting },
     watch,
     setError,
+    reset,
   } = useForm({
     defaultValues: {
       username: '',
@@ -21,19 +26,45 @@ const CreateAccountForm = ({
     },
   });
 
-  const password = watch('password'); 
+  const password = watch('password');
 
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post(
-        'http://localhost:8081/api/auth/register',
-        {
-          username: data.username,
-          email: data.email,
-          password: data.password,
-          role: accountType,
-        },
-      );
+      let response;
+      const payload = {
+        username: data.username,
+        email: data.email,
+        password: data.password,
+      };
+      if (!isEditMode) {
+        if (accountType === 'RESCUE_TEAM') {
+          response = await rescueTeamService.createRescueTeam({
+            username: data.username,
+            email: data.email,
+            password: data.password,
+            // role: 'rescue_team',
+          });
+        } else if (accountType === 'COORDINATOR') {
+          response = await coordinatorService.createCoordinator({
+            username: data.username,
+            email: data.email,
+            password: data.password,
+            // role: 'coordinator',
+          });
+        }
+      } else {
+        if (accountType === 'RESCUE_TEAM') {
+          response = await rescueTeamService.updateRescueTeam(
+            defaultValues.id,
+            payload,
+          );
+        } else if (accountType === 'COORDINATOR') {
+          response = await coordinatorService.updateCoordinator(
+            defaultValues.id,
+            payload,
+          );
+        }
+      }
 
       onSuccess?.(response.data);
       onClose?.();
@@ -50,6 +81,16 @@ const CreateAccountForm = ({
       ? 'Create Coordinator Account'
       : 'Create Rescue Team Account';
   };
+  useEffect(() => {
+    if (isEditMode && defaultValues) {
+      reset({
+        username: defaultValues.username,
+        email: defaultValues.email,
+        password: '',
+        confirmPassword: '',
+      });
+    }
+  }, [isEditMode, defaultValues, reset]);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">

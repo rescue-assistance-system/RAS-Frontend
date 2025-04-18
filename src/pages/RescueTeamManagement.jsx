@@ -17,7 +17,6 @@ const RescueTeamManagement = () => {
     setIsViewingDetails(true);
   };
 
-
   const getStatusBadge = (status) => {
     const statusStyles = {
       AVAILABLE: 'bg-green-100 text-green-800',
@@ -37,10 +36,11 @@ const RescueTeamManagement = () => {
           teamName: user.username,
           email: user.email,
           status: user.status,
-          role: user.role, 
+          phone: user.phone,
+          role: user.role,
           date: user.date,
         }));
-        console.log("filtered", filtered);
+        console.log('filtered', filtered);
         setRescueTeams(filtered);
       } catch (error) {
         console.error('Error fetching rescue teams:', error);
@@ -107,7 +107,7 @@ const RescueTeamManagement = () => {
                     Status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Location
+                    Phone
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Email
@@ -141,7 +141,7 @@ const RescueTeamManagement = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {user.role}
+                      {user.phone}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {user.email}
@@ -213,10 +213,10 @@ const RescueTeamManagement = () => {
           >
             <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
-            {/* Full-screen container for centering */}
             <div className="fixed inset-0 flex items-center justify-center p-4">
               <Dialog.Panel className="bg-white rounded-lg shadow-xl">
                 <RescueTeamForm
+                  accountType="RESCUE_TEAM"
                   onClose={() => setIsModalOpen(false)}
                   onSuccess={handleCreateTeam}
                 />

@@ -1,42 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CreateAccountForm from '../components/admin/Form/CreateAccount';
 import { Dialog } from '@headlessui/react';
 import RescueTeamDetail from '../components/admin/Form/RescueTeamDetailForm';
+import coordinatorService from '../services/coordinator.service';
+
 const CoordinatorManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCoordinator, setSelectedCoordinator] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+
   const handleCreateTeam = (newTeam) => {
-    console.log('New team created:', newTeam);
+    console.log('Team created/updated:', newTeam);
     setIsModalOpen(false);
+    setIsEditMode(false);
+    setSelectedCoordinator(null);
   };
+
   const [selectedTeamId, setSelectedTeamId] = useState(null);
   const [isViewingDetails, setIsViewingDetails] = useState(false);
 
-  const teams = [
-    {
-      id: 'RT-000354',
-      teamName: 'Alpha Rescue',
-      status: 'AVAILABLE',
-      location: 'District 1',
-      date: 'June 10, 2023',
-      members: 5,
-    },
-    {
-      id: 'RT-000986',
-      teamName: 'Beta Response',
-      status: 'ON_MISSION',
-      location: 'District 2',
-      date: 'June 12, 2023',
-      members: 4,
-    },
-    {
-      id: 'RT-000536',
-      teamName: 'Delta Force',
-      status: 'STANDBY',
-      location: 'District 3',
-      date: 'June 14, 2023',
-      members: 6,
-    },
-  ];
+  const [visiblePasswords, setVisiblePasswords] = useState({});
+  const togglePassword = (teamId) => {
+    setVisiblePasswords((prev) => ({
+      ...prev,
+      [teamId]: !prev[teamId],
+    }));
+  };
 
   const getStatusBadge = (status) => {
     const statusStyles = {
@@ -45,6 +34,51 @@ const CoordinatorManagement = () => {
       STANDBY: 'bg-yellow-100 text-yellow-800',
     };
     return `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyles[status] || 'bg-gray-100'}`;
+  };
+
+  const [coordinators, setCoordinators] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await coordinatorService.getAllCoordinators();
+        const filtered = data.map((user) => ({
+          id: user.id,
+          teamName: user.username,
+          email: user.email,
+          status: user.status,
+          phone: user.phone,
+          role: user.role,
+          password: user.password,
+          deviceId: user.device_id,
+        }));
+        console.log('filtered', filtered);
+        setCoordinators(filtered);
+      } catch (error) {
+        console.error('Error fetching rescue teams:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleEditClick = (coordinator) => {
+    setSelectedCoordinator({
+      id: coordinator.id,
+      username: coordinator.teamName,
+      email: coordinator.email,
+    });
+    setIsEditMode(true);
+    setIsModalOpen(true);
+  };
+  const handleDeleteClick = (coordinatorId) => {
+    try {
+      coordinatorService.deleteCoordinator(coordinatorId);
+      setCoordinators((prev) =>
+        prev.filter((coordinator) => coordinator.id !== coordinatorId),
+      );
+    } catch (error) {
+      console.error('Error deleting coordinator:', error);
+    }
+    console.log('Delete coordinator with ID:', coordinatorId);
   };
 
   return (
@@ -61,10 +95,13 @@ const CoordinatorManagement = () => {
               Coordinators
             </h2>
             <button
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => {
+                setSelectedCoordinator(selectedCoordinator);
+                setIsModalOpen(true);
+              }}
               className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
             >
-              Add New 
+              Add New
             </button>
           </div>
 
@@ -101,13 +138,13 @@ const CoordinatorManagement = () => {
                     Coordinator Name
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
+                    Email
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Location
+                    Password
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
+                    Device ID
                   </th>
                   {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     View Details
@@ -118,7 +155,7 @@ const CoordinatorManagement = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {teams.map((team) => (
+                {coordinators.map((team) => (
                   <tr key={team.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <input
@@ -134,21 +171,41 @@ const CoordinatorManagement = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={getStatusBadge(team.status)}>
-                        {team.status}
+                        {team.email}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {team.location}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 flex items-center gap-2">
+                      {visiblePasswords[team.id]
+                        ? '************'
+                        : '************'}
+
+                      {/* <button
+                        onClick={() => togglePassword(team.id)}
+                        className="focus:outline-none"
+                      >
+                        {visiblePasswords[team.id] ? (
+                          <EyeOff className="w-5 h-5 text-gray-500" />
+                        ) : (
+                          <Eye className="w-5 h-5 text-gray-500" />
+                        )}
+                      </button> */}
                     </td>
+
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {team.date}
+                      {team.deviceId}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <div className="flex gap-2">
-                        <button className="text-blue-600 hover:text-blue-900">
+                        <button
+                          className="text-blue-600 hover:text-blue-900"
+                          onClick={() => handleEditClick(team)}
+                        >
                           <i className="bx bx-edit-alt text-xl"></i>
                         </button>
-                        <button className="text-red-600 hover:text-red-900">
+                        <button
+                          className="text-red-600 hover:text-red-900"
+                          onClick={() => handleDeleteClick(team.id)}
+                        >
                           <i className="bx bx-trash text-xl"></i>
                         </button>
                       </div>
@@ -197,7 +254,11 @@ const CoordinatorManagement = () => {
 
           <Dialog
             open={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
+            onClose={() => {
+              setIsModalOpen(false);
+              setIsEditMode(false);
+              setSelectedCoordinator(null);
+            }}
             className="relative z-50"
           >
             <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
@@ -205,9 +266,15 @@ const CoordinatorManagement = () => {
             <div className="fixed inset-0 flex items-center justify-center p-4">
               <Dialog.Panel className="bg-white rounded-lg shadow-xl">
                 <CreateAccountForm
-                  onClose={() => setIsModalOpen(false)}
+                  onClose={() => {
+                    setIsModalOpen(false);
+                    setIsEditMode(false);
+                    setSelectedCoordinator(null);
+                  }}
                   onSuccess={handleCreateTeam}
                   accountType="COORDINATOR"
+                  isEditMode={isEditMode}
+                  defaultValues={selectedCoordinator}
                 />
               </Dialog.Panel>
             </div>

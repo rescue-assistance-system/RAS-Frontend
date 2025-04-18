@@ -2,56 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import PropTypes from 'prop-types';
 import rescueTeamService from '../../../services/rescueTeam.service';
+
 const RescueTeamDetail = ({ onBack, teamId }) => {
   const [rescueTeamProfile, setRescueTeamProfile] = useState([]);
-  const [formData, setFormData] = useState();
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await rescueTeamService.getRescueTeamById(teamId);
-      console.log("data", data);
-      const { account_info, rescue_team_info } = data.data;
-      console.log("account_info", account_info);
-      console.log("rescue_team_info", rescue_team_info);
-      const mappedData = {
-        profile: {
-          id: rescue_team_info.id,
-          teamName: rescue_team_info.team_name,
-          role: rescue_team_info.role,
-          location: rescue_team_info.location,
-          avatar: rescue_team_info.avatar,
-          status: rescue_team_info.is_active ? 'AVAILABLE' : 'UNAVAILABLE',
-        }, 
-        details: {
-          email: account_info.email,
-          phone: rescue_team_info.phone,
-          mobile: rescue_team_info.mobile,
-          address: rescue_team_info.address,
-          description: rescue_team_info.description,
-        },
-        members: rescue_team_info.team_members.map(member => ({
-          name: member.name,
-          role: member.role,
-          phone: member.phone,
-        })),
-        account: {
-          username: account_info.username,  
-          email: account_info.email,
-          password: account_info.password,
-          created_at: account_info.created_at,
-        },
-      };
-      setRescueTeamProfile(mappedData);
-      setFormData(mappedData);
-      console.log("mappedData", mappedData);
-      console.log("rescueTeamProfile", rescueTeamProfile);
-      
-    };
-    fetchData();
-  }, [teamId]);
-  useEffect(() => {
-    console.log("rescueTeamProfile (after update):", rescueTeamProfile);
-  }, [rescueTeamProfile]);
-
   const [showPassword, setShowPassword] = useState(false);
   const [isEditingPassword, setIsEditingPassword] = useState(false);
   const [newPassword, setNewPassword] = useState('');
@@ -60,60 +13,101 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
   const [isEditingMember, setIsEditingMember] = useState(false);
   const [editingMember, setEditingMember] = useState(null);
 
-  const handlePasswordChange = () => {
-    if (newPassword === confirmPassword) {
-      setFormData({
-        ...formData,
-        account: {
-          ...formData.account,
-          password: newPassword,
-        },
-      });
-      setIsEditingPassword(false);
-      setNewPassword('');
-      setConfirmPassword('');
-    } else {
-      alert("Passwords don't match!");
-    }
+  const formatDate = (dateString) => {
+    const options = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    };
+    return new Date(dateString).toLocaleDateString('en-US', options);
   };
 
-  const handleSaveMember = () => {
-    if (!editingMember?.name || !editingMember?.phone) {
-      alert('Please fill in all required fields');
-      return;
-    }
-
-    if (isEditingMember) {
-      const updatedMembers = formData.members.map((member, index) =>
-        index === editingMember.index ? editingMember : member,
+  const reverseGeocode = async (lat, lon) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`,
       );
-      setFormData({
-        ...formData,
-        members: updatedMembers,
-      });
-    } else {
-      setFormData({
-        ...formData,
-        members: [...formData.members, editingMember],
-      });
-    }
-
-    setIsAddingMember(false);
-    setIsEditingMember(false);
-    setEditingMember(null);
-  };
-
-  const handleDeleteMember = (index) => {
-    if (confirm('Are you sure you want to remove this member?')) {
-      const updatedMembers = formData.members.filter((_, i) => i !== index);
-      setFormData({
-        ...formData,
-        members: updatedMembers,
-      });
+      const data = await response.json();
+      return data.display_name; // địa chỉ đầy đủ
+    } catch (error) {
+      console.error('Error in reverse geocoding:', error);
+      return 'Unknown location';
     }
   };
 
-  
+  const [realAddress, setRealAddress] = useState('');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await rescueTeamService.getRescueTeamById(teamId);
+      const { account_info, rescue_team_info } = data.data;
+      const mappedData = {
+        profile: {
+          id: rescue_team_info.id,
+          teamName: rescue_team_info.team_name,
+          role: rescue_team_info.role,
+          location: rescue_team_info.default_location,
+          status: rescue_team_info.is_active ? 'AVAILABLE' : 'UNAVAILABLE',
+        },
+        details: {
+          email: account_info.email,
+          phone: rescue_team_info.phone,
+          mobile: rescue_team_info.mobile,
+          address: rescue_team_info.address,
+          description: rescue_team_info.description,
+        },
+        members: rescue_team_info.team_members.map((member) => ({
+          name: member.name,
+          role: member.role,
+          phone: member.phone,
+        })),
+        account: {
+          id: account_info.id,
+          username: account_info.username,
+          email: account_info.email,
+          password: account_info.password,
+          deviceId: account_info.deviceId,
+          phone: account_info.phone,
+          created_at: formatDate(account_info.createdAt),
+        },
+      };
+      setRescueTeamProfile(mappedData);
+      if (rescue_team_info.default_location) {
+        const { latitude, longitude } = rescue_team_info.default_location;
+        const address = await reverseGeocode(latitude, longitude);
+        console.log(address);
+        setRealAddress(address);
+      }
+    };
+    fetchData();
+  }, [teamId]);
+
+  const handlePasswordChange = async () => {
+    try {
+      if (newPassword === confirmPassword) {
+        const response = await rescueTeamService.updateRescueTeam(
+          rescueTeamProfile.account.id,
+          {
+            username: rescueTeamProfile.account.username,
+            email: rescueTeamProfile.account.email,
+            password: newPassword,
+          },
+        );
+        if (response.status === 'success') {
+          alert('Password updated successfully!');
+        } else {
+          alert('Failed to update password');
+        }
+      } else {
+        alert("Passwords don't match!");
+      }
+    } catch (error) {
+      console.error('Error updating password:', error);
+      alert('Failed to update password');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -132,17 +126,17 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex flex-col items-center text-center">
               <img
-                src={formData.profile.avatar}
+                src="https://bhd.1cdn.vn/2025/04/09/image.nhandan.vn-w2000-uploaded-2025-fdmzftmztpmf-2025_04_08-_ndo_br_dat-9084-5777-7970.jpg"
                 alt="Team Avatar"
                 className="w-32 h-32 rounded-full mb-4"
               />
               <h2 className="text-2xl font-bold text-gray-900 mb-1">
-                {formData.profile.teamName}
+                {rescueTeamProfile?.profile?.teamName}
               </h2>
-              <p className="text-gray-600 mb-2">{formData.profile.role}</p>
-              <p className="text-gray-500 text-sm mb-4">
-                {formData.profile.location}
+              <p className="text-gray-600 mb-2">
+                {rescueTeamProfile?.profile?.role}
               </p>
+              <p className="text-gray-500 text-sm mb-4">{realAddress}</p>
 
               <div className="w-full space-y-4 mt-4">
                 <div className="flex items-center text-gray-700">
@@ -151,7 +145,7 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
                     <span className="text-sm text-gray-500">Email</span>
                   </div>
                   <span className="text-sm font-medium">
-                    {formData.details.email}
+                    {rescueTeamProfile?.details?.email}
                   </span>
                 </div>
 
@@ -161,7 +155,7 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
                     <span className="text-sm text-gray-500">Username</span>
                   </div>
                   <span className="text-sm font-medium">
-                    {formData.account.username}
+                    {rescueTeamProfile?.account?.username}
                   </span>
                 </div>
                 <div className="flex items-center text-gray-700">
@@ -171,7 +165,9 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium tracking-wider">
-                      {showPassword ? formData.account.password : '•••••••'}
+                      {showPassword
+                        ? rescueTeamProfile?.account?.password
+                        : '•••••••'}
                     </span>
                     <button
                       onClick={() => setShowPassword(!showPassword)}
@@ -192,7 +188,7 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
                     <span className="text-sm text-gray-500">Created Date</span>
                   </div>
                   <span className="text-sm font-medium">
-                    {formData.account.created_at}
+                    {rescueTeamProfile?.account?.created_at}
                   </span>
                 </div>
 
@@ -245,10 +241,10 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
                     <div className="flex items-center gap-2 ml-32">
                       <button
                         onClick={handlePasswordChange}
-                        className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 flex items-center gap-2"
+                        className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 flex items-center gap-1 ml-4"
                       >
                         <i className="bx bx-check"></i>
-                        Save Changes
+                        Save
                       </button>
                       <button
                         onClick={() => {
@@ -280,12 +276,12 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
                 </label>
                 <input
                   type="text"
-                  value={formData.profile.teamName}
+                  value={rescueTeamProfile?.profile?.teamName || ''}
                   onChange={(e) =>
-                    setFormData({
-                      ...formData,
+                    setRescueTeamProfile({
+                      ...rescueTeamProfile,
                       profile: {
-                        ...formData.profile,
+                        ...rescueTeamProfile.profile,
                         teamName: e.target.value,
                       },
                     })
@@ -300,11 +296,14 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
                 </label>
                 <input
                   type="email"
-                  value={formData.details.email}
+                  value={rescueTeamProfile?.details?.email || ''}
                   onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      details: { ...formData.details, email: e.target.value },
+                    setRescueTeamProfile({
+                      ...rescueTeamProfile,
+                      details: {
+                        ...rescueTeamProfile.details,
+                        email: e.target.value,
+                      },
                     })
                   }
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -318,11 +317,14 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
                   </label>
                   <input
                     type="text"
-                    value={formData.details.phone}
+                    value={rescueTeamProfile?.account?.phone || ''}
                     onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        details: { ...formData.details, phone: e.target.value },
+                      setRescueTeamProfile({
+                        ...rescueTeamProfile,
+                        details: {
+                          ...rescueTeamProfile.details,
+                          phone: e.target.value,
+                        },
                       })
                     }
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -330,17 +332,17 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
                 </div>
                 <div className="flex items-center space-x-4">
                   <label className="block text-sm font-medium text-gray-700 w-32 ">
-                    Mobile
+                    Device ID
                   </label>
                   <input
                     type="text"
-                    value={formData.details.mobile}
+                    value={rescueTeamProfile?.account?.deviceId || ''}
                     onChange={(e) =>
-                      setFormData({
-                        ...formData,
+                      setRescueTeamProfile({
+                        ...rescueTeamProfile,
                         details: {
-                          ...formData.details,
-                          mobile: e.target.value,
+                          ...rescueTeamProfile.details,
+                          deviceId: e.target.value,
                         },
                       })
                     }
@@ -355,13 +357,16 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
                 </label>
                 <input
                   type="text"
-                  value={formData.details.address}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      details: { ...formData.details, address: e.target.value },
-                    })
-                  }
+                  value={realAddress}
+                  // onChange={(e) =>
+                  //   setRescueTeamProfile({
+                  //     ...rescueTeamProfile,
+                  //     details: {
+                  //       ...rescueTeamProfile.details,
+                  //       address: e.target.value,
+                  //     },
+                  //   })
+                  // }
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -371,12 +376,12 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
                   Description
                 </label>
                 <textarea
-                  value={formData.details.description}
+                  value={rescueTeamProfile?.details?.description || ''}
                   onChange={(e) =>
-                    setFormData({
-                      ...formData,
+                    setRescueTeamProfile({
+                      ...rescueTeamProfile,
                       details: {
-                        ...formData.details,
+                        ...rescueTeamProfile.details,
                         description: e.target.value,
                       },
                     })
@@ -394,13 +399,13 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
               <h3 className="text-lg font-semibold text-gray-900">
                 Team Members
               </h3>
-              <button
+              {/* <button
                 onClick={() => setIsAddingMember(true)}
                 className="flex items-center gap-2 px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm"
               >
                 <i className="bx bx-plus"></i>
                 Add Member
-              </button>
+              </button> */}
             </div>
 
             <div className="overflow-x-auto">
@@ -422,7 +427,7 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {formData.members.map((member, index) => (
+                  {rescueTeamProfile?.members?.map((member, index) => (
                     <tr key={index} className="hover:bg-gray-50">
                       <td className="py-3 px-4">
                         <span className="text-sm font-medium text-gray-900">
@@ -456,12 +461,12 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
                           >
                             <i className="bx bx-edit-alt text-xl"></i>
                           </button>
-                          <button
+                          {/* <button
                             onClick={() => handleDeleteMember(index)}
                             className="p-1 text-gray-400 hover:text-red-500"
                           >
                             <i className="bx bx-trash text-xl"></i>
-                          </button>
+                          </button> */}
                         </div>
                       </td>
                     </tr>
@@ -555,23 +560,23 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
                       >
                         Cancel
                       </button>
-                      <button
+                      {/* <button
                         onClick={handleSaveMember}
                         className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                       >
                         {isEditingMember ? 'Save Changes' : 'Add Member'}
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 </div>
               </div>
             )}
           </div>
-          <div className="flex justify-end">
+          {/* <div className="flex justify-end">
             <button className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">
               Save Changes
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
