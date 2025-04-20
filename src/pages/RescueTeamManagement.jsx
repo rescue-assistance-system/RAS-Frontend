@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import RescueTeamForm from '../components/admin/Form/CreateAccount';
 import { Dialog } from '@headlessui/react';
 import RescueTeamDetail from '../components/admin/Form/RescueTeamDetailForm';
@@ -8,13 +10,25 @@ const RescueTeamManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const handleCreateTeam = (newTeam) => {
     console.log('New team created:', newTeam);
+    setRescueTeams((prevTeams) => [...prevTeams, newTeam]);
     setIsModalOpen(false);
+    toast.success('Team created successfully!');
   };
   const [selectedTeamId, setSelectedTeamId] = useState(null);
   const [isViewingDetails, setIsViewingDetails] = useState(false);
   const handleViewDetails = (teamId) => {
     setSelectedTeamId(teamId);
     setIsViewingDetails(true);
+  };
+
+  const handleDelete = async (teamId) => {
+    try {
+      await rescueTeamService.deleteRescueTeam(teamId);
+      setRescueTeams((prevTeams) => prevTeams.filter((team) => team.id !== teamId));
+      console.log(`Team with ID ${teamId} deleted successfully.`);
+    } catch (error) {
+      console.error(`Error deleting team with ID ${teamId}:`, error);
+    }
   };
 
   const getStatusBadge = (status) => {
@@ -33,7 +47,7 @@ const RescueTeamManagement = () => {
         const data = await rescueTeamService.getAllRescueTeams();
         const filtered = data.map((user) => ({
           id: user.id,
-          teamName: user.username,
+          username: user.username,
           email: user.email,
           status: user.status,
           phone: user.phone,
@@ -133,7 +147,7 @@ const RescueTeamManagement = () => {
                       {user.id}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {user.teamName}
+                      {user.username}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={getStatusBadge(user.status)}>
@@ -159,7 +173,9 @@ const RescueTeamManagement = () => {
                         <button className="text-blue-600 hover:text-blue-900">
                           <i className="bx bx-edit-alt text-xl"></i>
                         </button>
-                        <button className="text-red-600 hover:text-red-900">
+                        <button className="text-red-600 hover:text-red-900"
+                          onClick={() => handleDelete(user.id)}
+                        >
                           <i className="bx bx-trash text-xl"></i>
                         </button>
                       </div>

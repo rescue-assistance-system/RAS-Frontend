@@ -133,7 +133,7 @@ const Sidebar = () => {
             </Link>
           </li>
 
-          <li>
+          {/* <li>
             <button
               onClick={() => toggleMenu('ecommerce')}
               className="flex items-center justify-between w-full p-2 rounded-lg hover:bg-gray-700 transition-colors"
@@ -157,7 +157,7 @@ const Sidebar = () => {
                 </li>
               </ul>
             )}
-          </li>
+          </li> */}
         </ul>
       )}
 

@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PlusCircle, Search } from 'lucide-react';
 
 import NewsForm from '../components/admin/Form/NewsForm';
 import NewsCard from '../components/admin/Card/NewsCard';
+import newsService from '../services/news.service';
+// import { useForm } from 'react-hook-form';
 
 const NewsManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -10,184 +12,37 @@ const NewsManagement = () => {
   const [sortBy, setSortBy] = useState('newest');
   const [showForm, setShowForm] = useState(false);
   const [editingNews, setEditingNews] = useState(null);
-  const [newsItems, setNewsItems] = useState([
-    {
-      id: 1,
-      title:
-        "Asia's biggest typhoon of 2024 hit multiple countries in Southeast Asia",
-      description:
-        'Almost 600 people were killed across Vietnam (300 deaths), Myanmar (226 deaths), Laos (4 deaths), Thailand (42 deaths) and the Philippines (21 deaths). Most of the deaths are due to landslides and flash floods.',
-      category: 'Weather',
-      image:
-        'https://eoimages.gsfc.nasa.gov/images/imagerecords/150000/150290/ISS067-E-302073_lrg.jpg',
-      status: 'Published',
-      time: '1 hour ago',
-    },
-    {
-      id: 2,
-      title: 'Northeast to see dangerous rip currents, huge waves',
-      description: 'Northeast to see dangerous rip currents, huge waves...',
-      category: 'Disaster',
-      image:
-        'https://img.freepik.com/free-photo/image-auto-accident-involving-two-cars_613910-7924.jpg',
-      status: 'Draft',
-      time: '2 hours ago',
-    },
-    {
-      id: 3,
-      title: 'Major earthquake strikes coastal region',
-      description:
-        'A powerful earthquake measuring 7.2 on the Richter scale has struck the coastal region...',
-      category: 'Disaster',
-      image:
-        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
-      status: 'Published',
-      time: '3 hours ago',
-    },
-    {
-      id: 4,
-      title: 'Heavy rainfall causes flooding in multiple areas',
-      description:
-        'Continuous heavy rainfall has led to severe flooding in several low-lying areas...',
-      category: 'Weather',
-      image:
-        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
-      status: 'Published',
-      time: '4 hours ago',
-    },
-    {
-      id: 5,
-      title: 'Major traffic accident on highway',
-      description:
-        'A multi-vehicle collision has occurred on the main highway during rush hour...',
-      category: 'Accident',
-      image:
-        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
-      status: 'Draft',
-      time: '5 hours ago',
-    },
-    {
-      id: 6,
-      title: 'Tropical storm warning issued',
-      description:
-        'Meteorologists have issued a warning for an approaching tropical storm...',
-      category: 'Weather',
-      image:
-        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
-      status: 'Published',
-      time: '6 hours ago',
-    },
-    {
-      id: 7,
-      title: 'Landslide blocks major road',
-      description:
-        'A massive landslide has blocked the main road connecting two cities...',
-      category: 'Disaster',
-      image:
-        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
-      status: 'Published',
-      time: '7 hours ago',
-    },
-    {
-      id: 8,
-      title: 'Industrial accident at factory',
-      description:
-        'An explosion has occurred at a chemical factory in the industrial zone...',
-      category: 'Accident',
-      image:
-        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
-      status: 'Draft',
-      time: '8 hours ago',
-    },
-    {
-      id: 9,
-      title: 'Record-breaking heatwave',
-      description:
-        'The region is experiencing its hottest temperatures in recorded history...',
-      category: 'Weather',
-      image:
-        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
-      status: 'Published',
-      time: '9 hours ago',
-    },
-    {
-      id: 10,
-      title: 'Bridge collapse investigation',
-      description:
-        'Authorities are investigating the cause of a major bridge collapse...',
-      category: 'Accident',
-      image:
-        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
-      status: 'Draft',
-      time: '10 hours ago',
-    },
-    {
-      id: 11,
-      title: 'Forest fire spreads rapidly',
-      description:
-        'A large forest fire is spreading rapidly due to strong winds...',
-      category: 'Disaster',
-      image:
-        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
-      status: 'Published',
-      time: '11 hours ago',
-    },
-    {
-      id: 12,
-      title: 'Flash flood warning',
-      description:
-        'Emergency services have issued a flash flood warning for several areas...',
-      category: 'Weather',
-      image:
-        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
-      status: 'Published',
-      time: '12 hours ago',
-    },
-    {
-      id: 13,
-      title: 'Record-breaking heatwave',
-      description:
-        'The region is experiencing its hottest temperatures in recorded history...',
-      category: 'Weather',
-      image:
-        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
-      status: 'Published',
-      time: '9 hours ago',
-    },
-    {
-      id: 14,
-      title: 'Bridge collapse investigation',
-      description:
-        'Authorities are investigating the cause of a major bridge collapse...',
-      category: 'Accident',
-      image:
-        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
-      status: 'Draft',
-      time: '10 hours ago',
-    },
-    {
-      id: 15,
-      title: 'Forest fire spreads rapidly',
-      description:
-        'A large forest fire is spreading rapidly due to strong winds...',
-      category: 'Disaster',
-      image:
-        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
-      status: 'Published',
-      time: '11 hours ago',
-    },
-    {
-      id: 16,
-      title: 'Flash flood warning',
-      description:
-        'Emergency services have issued a flash flood warning for several areas...',
-      category: 'Weather',
-      image:
-        'https://cdn.britannica.com/34/127134-050-49EC55CD/Building-foundation-earthquake-Japan-Kobe-January-1995.jpg',
-      status: 'Published',
-      time: '12 hours ago',
-    },
-  ]);
+  const [newsItems, setNewsItems] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const categoryResponse = await newsService.getAllCategories();
+        setCategories(categoryResponse.data);
+
+        const newsResponse = await newsService.getAllNews();
+        const formattedNews = newsResponse.map((news) => ({
+          id: news.id,
+          title: news.title,
+          description: news.content,
+          category:
+            categoryResponse.data.find((cat) => cat.id === news.category_id)
+              ?.name || 'Unknown',
+          image: news.image_url,
+          status: 'Published',
+          time: new Date(news.created_at).toLocaleString(),
+        }));
+        setNewsItems(formattedNews);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const filteredNews = newsItems.filter((news) => {
     const matchesCategory =
@@ -211,41 +66,12 @@ const NewsManagement = () => {
     }
   });
 
-  const handleSubmit = (newsData) => {
-    if (editingNews) {
-      const updatedNews = {
-        ...newsData,
-        id: editingNews.id,
-        time: editingNews.time,
-        image: newsData.images?.[0] || editingNews.image,
-      };
-      setNewsItems(
-        newsItems.map((item) =>
-          item.id === editingNews.id ? updatedNews : item,
-        ),
-      );
-    } else {
-      const newNews = {
-        ...newsData,
-        id: Date.now(),
-        time: '1 minute ago',
-        image: newsData.images?.[0] || 'https://via.placeholder.com/400x300',
-      };
-      setNewsItems([newNews, ...newsItems]);
-    }
-    setShowForm(false);
-    setEditingNews(null);
-  };
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = sortedNews.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(sortedNews.length / itemsPerPage);
 
-  const handleEdit = (news) => {
-    const newsForEdit = {
-      ...news,
-      images: [news.image],
-    };
-    setEditingNews(newsForEdit);
-    setShowForm(true);
-  };
-
+  // Handlers
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
@@ -256,13 +82,6 @@ const NewsManagement = () => {
     setCurrentPage(1);
   };
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 9;
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = sortedNews.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(sortedNews.length / itemsPerPage);
-
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -270,6 +89,25 @@ const NewsManagement = () => {
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
     setCurrentPage(1);
+  };
+  const handleEdit = async (id) => {
+    try {
+      const response = await newsService.getNewsById(id);
+      setEditingNews(response);
+      setShowForm(true);
+    } catch (error) {
+      console.error('Error fetching news by ID:', error);
+    }
+  };
+
+  const handleFormSubmit = (updatedNews) => {
+    setNewsItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === updatedNews.id ? updatedNews : item,
+      ),
+    );
+    setShowForm(false);
+    setEditingNews(null);
   };
 
   return (
@@ -280,7 +118,7 @@ const NewsManagement = () => {
             setShowForm(false);
             setEditingNews(null);
           }}
-          onSubmit={handleSubmit}
+          onSubmit={handleFormSubmit}
           initialData={editingNews}
         />
       ) : (
@@ -317,9 +155,11 @@ const NewsManagement = () => {
                 onChange={handleCategoryChange}
               >
                 <option value="All">All Categories</option>
-                <option value="Weather">Weather</option>
-                <option value="Disaster">Disaster</option>
-                <option value="Accident">Accident</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.name}>
+                    {category.name}
+                  </option>
+                ))}
               </select>
 
               <select

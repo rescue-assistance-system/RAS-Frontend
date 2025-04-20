@@ -7,6 +7,9 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
   const [rescueTeamProfile, setRescueTeamProfile] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
   const [isEditingPassword, setIsEditingPassword] = useState(false);
+  const [newUsername, setNewUsername] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+  const [newPhone, setNewPhone] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isAddingMember, setIsAddingMember] = useState(false);
@@ -45,20 +48,20 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
       const { account_info, rescue_team_info } = data.data;
       const mappedData = {
         profile: {
-          id: rescue_team_info.id,
-          teamName: rescue_team_info.team_name,
-          role: rescue_team_info.role,
-          location: rescue_team_info.default_location,
-          status: rescue_team_info.is_active ? 'AVAILABLE' : 'UNAVAILABLE',
+          id: rescue_team_info?.id,
+          teamName: rescue_team_info?.team_name,
+          role: rescue_team_info?.role,
+          location: rescue_team_info?.default_location,
+          status: rescue_team_info?.is_active ? 'AVAILABLE' : 'UNAVAILABLE',
         },
         details: {
           email: account_info.email,
-          phone: rescue_team_info.phone,
-          mobile: rescue_team_info.mobile,
-          address: rescue_team_info.address,
-          description: rescue_team_info.description,
+          phone: rescue_team_info?.phone,
+          mobile: rescue_team_info?.mobile,
+          address: rescue_team_info?.address,
+          description: rescue_team_info?.description,
         },
-        members: rescue_team_info.team_members.map((member) => ({
+        members: rescue_team_info?.team_members.map((member) => ({
           name: member.name,
           role: member.role,
           phone: member.phone,
@@ -87,25 +90,41 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
   const handlePasswordChange = async () => {
     try {
       if (newPassword === confirmPassword) {
+        const payload = {
+          username: newUsername || rescueTeamProfile.account.username, // Lấy giá trị mới hoặc fallback về giá trị cũ
+          email: newEmail || rescueTeamProfile.account.email,
+          phone: newPhone || rescueTeamProfile.details.phone,
+          password: newPassword,
+        };
+  
         const response = await rescueTeamService.updateRescueTeam(
           rescueTeamProfile.account.id,
-          {
-            username: rescueTeamProfile.account.username,
-            email: rescueTeamProfile.account.email,
-            password: newPassword,
-          },
+          payload
         );
+  
         if (response.status === 'success') {
-          alert('Password updated successfully!');
+          alert('Account information updated successfully!');
+          setRescueTeamProfile((prev) => ({
+            ...prev,
+            account: {
+              ...prev.account,
+              username: payload.username,
+              email: payload.email,
+            },
+            details: {
+              ...prev.details,
+              phone: payload.phone,
+            },
+          }));
         } else {
-          alert('Failed to update password');
+          alert('Failed to update account information');
         }
       } else {
         alert("Passwords don't match!");
       }
     } catch (error) {
-      console.error('Error updating password:', error);
-      alert('Failed to update password');
+      console.error('Error updating account information:', error);
+      alert('Failed to update account information');
     }
   };
 
@@ -204,6 +223,58 @@ const RescueTeamDetail = ({ onBack, teamId }) => {
 
                 {isEditingPassword && (
                   <div className="space-y-4 pt-4 mt-2 border-t border-gray-200">
+                    <div className="flex items-center">
+                      <div className="w-32 flex items-center gap-2">
+                        <i className="bx bx-user text-lg text-gray-500"></i>
+                        <span className="text-sm text-gray-500">
+                          New Username
+                        </span>
+                      </div>
+                      <div className="flex-1 relative">
+                        <input
+                          type="text"
+                          value={newUsername}
+                          onChange={(e) => setNewUsername(e.target.value)}
+                          className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="Enter New Username"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center">
+                      <div className="w-32 flex items-center gap-2">
+                        <i className="bx bx-envelope text-lg text-gray-500"></i>
+                        <span className="text-sm text-gray-500">New Email</span>
+                      </div>
+                      <div className="flex-1 relative">
+                        <input
+                          type="email"
+                          value={newEmail}
+                          onChange={(e) => setNewEmail(e.target.value)}
+                          className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="Enter New Email"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center">
+                      <div className="w-32 flex items-center gap-2">
+                        <i className="bx bx-phone text-lg text-gray-500"></i>
+                        <span className="text-sm text-gray-500">
+                          New Phone
+                        </span>
+                      </div>
+                      <div className="flex-1 relative">
+                        <input
+                          type="text"
+                          value={newPhone}
+                          onChange={(e) => setNewPhone(e.target.value)}
+                          className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="Enter New Phone"
+                        />
+                      </div>
+                    </div>
+
                     <div className="flex items-center">
                       <div className="w-32 flex items-center gap-2">
                         <i className="bx bx-lock-alt text-lg text-gray-500"></i>

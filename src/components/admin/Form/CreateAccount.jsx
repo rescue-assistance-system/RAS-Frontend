@@ -21,6 +21,7 @@ const CreateAccountForm = ({
     defaultValues: {
       username: '',
       email: '',
+      phone: '',
       password: '',
       confirmPassword: '',
     },
@@ -35,6 +36,7 @@ const CreateAccountForm = ({
         username: data.username,
         email: data.email,
         password: data.password,
+        phone: data.phone,
       };
       if (!isEditMode) {
         if (accountType === 'RESCUE_TEAM') {
@@ -42,13 +44,16 @@ const CreateAccountForm = ({
             username: data.username,
             email: data.email,
             password: data.password,
+            phone: data.phone,
             // role: 'rescue_team',
           });
+          // onSuccess?.(response.data);
         } else if (accountType === 'COORDINATOR') {
           response = await coordinatorService.createCoordinator({
             username: data.username,
             email: data.email,
             password: data.password,
+            phone: data.phone,
             // role: 'coordinator',
           });
         }
@@ -154,6 +159,27 @@ const CreateAccountForm = ({
           />
           {errors.email && (
             <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Phone *
+          </label>
+          <input
+            {...register('phone', {
+              required: 'Phone is required',
+              pattern: {
+                value: /^\d{10}$/,
+                message: 'Phone number must be exactly 10 digits',
+              },
+            })}
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 
+    ${errors.phone ? 'border-red-500' : 'border-gray-300'}`}
+            placeholder="Enter phone number"
+          />
+          {errors.phone && (
+            <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
           )}
         </div>
 

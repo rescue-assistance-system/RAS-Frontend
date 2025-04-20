@@ -43,10 +43,19 @@ const updateRescueTeam = async (id, data) => {
     throw error;
   }
 };
-
+const deleteRescueTeam = async (id) => {
+  try {
+    const response = await axios.delete(API_URL + `/rescue-teams/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting rescue team:', error);
+    throw error;
+  }
+};
 export default {
   getAllRescueTeams,
   getRescueTeamById,
   createRescueTeam,
   updateRescueTeam,
+  deleteRescueTeam,
 };

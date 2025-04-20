@@ -14,6 +14,19 @@ const StatCard = ({ title, mainStat, subStat, color }) => (
     </div>
   </div>
 );
+const SOSCard = () => {
+  return (
+    <div className="absolute bottom-4 left-4 bg-white p-4 rounded-lg shadow-lg backdrop-blur-sm bg-opacity-90 hover:bg-opacity-100 transition-all border-red-500 w-64 h-80">
+      <h3 className="text-red-600 text-lg font-semibold mb-1">SOS signals</h3>
+      <div className="flex items-baseline">
+        <span className="text-2xl font-bold mr-1 text-red-600">
+          10,053 request
+        </span>
+        <span className="text-sm text-gray-500">+8% month over month</span>
+      </div>
+    </div>
+  );
+};
 
 const Dashboard = () => {
   const center = [16.0544, 108.2022]; // Đà Nẵng coordinates
@@ -60,6 +73,9 @@ const Dashboard = () => {
     <div className="relative h-screen w-full">
       <div className="absolute inset-0" style={{ zIndex: 0 }}>
         <MapComponent center={center} zoom={zoom} markers={markers} />
+      </div>
+      <div className="absolute top-100 right-70">
+        <SOSCard />
       </div>
       <div className="absolute inset-x-32 bottom-25 px-4 z-[1000]">
         <div className="max-w-7xl mx-auto">

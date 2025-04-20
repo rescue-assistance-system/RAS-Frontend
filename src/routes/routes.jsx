@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from '../layouts/Layout';
 import Dashboard from '../pages/Dashboard';
 import NewsManagement from '../pages/NewsManagement';
@@ -14,6 +14,8 @@ import CoordinatorManagement from '../pages/CoordinatorManagement';
 const AppRoutes = () => {
   return (
     <Routes>
+      <Route path="/" element={<Navigate to="/login" replace />} />
+
       <Route element={<AuthLayout />}>
         <Route
           path="login"
