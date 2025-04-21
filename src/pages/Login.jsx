@@ -2,13 +2,25 @@ import React from 'react';
 import { useState } from 'react';
 import { Bell, Mail, Lock } from 'lucide-react';
 import sos from '../assets/sos_login.jpg';
+import useAuthStore from '../stores/authStore';
+import { useNavigate } from 'react-router-dom';
+
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login, isLoading, error } = useAuthStore();
+  const deviceId = 'iphone12';
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Login attempt with:', { email, password });
+    try {
+      await login(email, password, deviceId);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
 
   return (
@@ -64,35 +76,35 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="relative">
-              <Mail className="absolute left-0 top-1/2 -translate-y-1/2 text-white h-5 w-5" />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
-                className="w-full bg-transparent border-b border-white/50 py-2 pl-8 text-white placeholder-white/70 focus:outline-none focus:border-white"
+                className="w-full bg-white text-gray-800 py-3 px-4 rounded focus:outline-none"
                 required
               />
             </div>
 
             <div className="relative">
-              <Lock className="absolute left-0 top-1/2 -translate-y-1/2 text-white h-5 w-5" />
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                className="w-full bg-transparent border-b border-white/50 py-2 pl-8 text-white placeholder-white/70 focus:outline-none focus:border-white"
+                className="w-full bg-white text-gray-800 py-3 px-4 rounded focus:outline-none"
                 required
               />
             </div>
 
             <button
               type="submit"
-              className="w-full bg-white text-gray-900 font-medium py-3 rounded hover:bg-gray-100 transition-colors"
+              disabled={isLoading}
+              className="w-full bg-white text-red-500 font-medium py-3 rounded hover:bg-red-100 transition-colors"
             >
-              Submit
+              {isLoading ? 'Logging in...' : 'Submit'}
             </button>
+            {error && <p className="text-red-500">{error}</p>}
           </form>
         </div>
       </div>

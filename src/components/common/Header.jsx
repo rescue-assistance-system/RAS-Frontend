@@ -1,15 +1,22 @@
 import React from 'react';
 import 'boxicons/css/boxicons.min.css';
 import avatar from '../../assets/sos_login.jpg';
+import useSidebarStore from '../../stores/sidebarStore';
+
 const Header = () => {
+  const { isOpen } = useSidebarStore();
   return (
-    <header>
-      <div className="flex items-center p-4 bg-gray-100">
+    <header
+      className={`fixed top-0 right-0 transition-all duration-300 bg-gray-50 p-3 shadow-lg z-50 ${
+        isOpen ? 'left-54 pl-6' : 'left-22 pl-2'
+      }`}
+    >
+      <div className="flex items-center ">
         <div className="md:hidden">
           <i className="bx bx-menu text-2xl cursor-pointer"></i>
         </div>
-        
-        <div className="flex-grow max-w-xl mx-4 relative hidden md:block">
+
+        <div className="flex-grow max-w-xl relative hidden md:block">
           <input
             type="text"
             className="w-full p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -30,7 +37,7 @@ const Header = () => {
                 <i className="bx bx-search text-xl"></i>
               </a>
             </li>
-            
+
             <li className="relative group">
               <a href="#" className="text-gray-600 hover:text-gray-900">
                 <i className="bx bx-category text-xl"></i>
@@ -78,57 +85,93 @@ const Header = () => {
             </li>
 
             <li className="relative group">
-              <a href="#" className="text-gray-600 hover:text-gray-900 relative">
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">7</span>
+              <a
+                href="#"
+                className="text-gray-600 hover:text-gray-900 relative"
+              >
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                  7
+                </span>
                 <i className="bx bx-bell text-xl"></i>
               </a>
               <div className="absolute right-0 mt-2 hidden group-hover:block bg-white shadow-lg rounded-lg w-80 z-10 max-h-96 overflow-y-auto">
                 <div className="p-3 border-b flex justify-between">
                   <p className="font-semibold">Notifications</p>
-                  <p className="text-sm text-blue-500 hover:text-blue-700 cursor-pointer">Mark all as read</p>
+                  <p className="text-sm text-blue-500 hover:text-blue-700 cursor-pointer">
+                    Mark all as read
+                  </p>
                 </div>
                 <div className="divide-y">
-                  <a href="#" className="flex items-center p-3 hover:bg-gray-50">
+                  <a
+                    href="#"
+                    className="flex items-center p-3 hover:bg-gray-50"
+                  >
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mr-3">
                       <i className="bx bx-group"></i>
                     </div>
                     <div>
                       <h6 className="font-medium">New Customers</h6>
-                      <p className="text-sm text-gray-600">5 new user registered</p>
+                      <p className="text-sm text-gray-600">
+                        5 new user registered
+                      </p>
                       <span className="text-xs text-gray-400">14 Sec ago</span>
                     </div>
                   </a>
-                  {/* Thêm các mục thông báo khác nếu cần */}
                 </div>
                 <div className="p-3 text-center border-t">
-                  <a href="#" className="text-blue-500 hover:text-blue-700 text-sm">View All Notifications</a>
+                  <a
+                    href="#"
+                    className="text-blue-500 hover:text-blue-700 text-sm"
+                  >
+                    View All Notifications
+                  </a>
                 </div>
               </div>
             </li>
 
             <li className="relative group">
-              <a href="#" className="text-gray-600 hover:text-gray-900 relative">
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">8</span>
+              <a
+                href="#"
+                className="text-gray-600 hover:text-gray-900 relative"
+              >
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                  8
+                </span>
                 <i className="bx bx-comment text-xl"></i>
               </a>
               <div className="absolute right-0 mt-2 hidden group-hover:block bg-white shadow-lg rounded-lg w-80 z-10 max-h-96 overflow-y-auto">
                 <div className="p-3 border-b flex justify-between">
                   <p className="font-semibold">Messages</p>
-                  <p className="text-sm text-blue-500 hover:text-blue-700 cursor-pointer">Mark all as read</p>
+                  <p className="text-sm text-blue-500 hover:text-blue-700 cursor-pointer">
+                    Mark all as read
+                  </p>
                 </div>
                 <div className="divide-y">
-                  <a href="#" className="flex items-center p-3 hover:bg-gray-50">
-                    <img src="assets/images/avatars/avatar-1.png" className="w-10 h-10 rounded-full mr-3" alt="user avatar" />
+                  <a
+                    href="#"
+                    className="flex items-center p-3 hover:bg-gray-50"
+                  >
+                    <img
+                      src="assets/images/avatars/avatar-1.png"
+                      className="w-10 h-10 rounded-full mr-3 object-cover object-center"
+                      alt="user avatar"
+                    />
                     <div>
                       <h6 className="font-medium">Daisy Anderson</h6>
-                      <p className="text-sm text-gray-600">The standard chunk of lorem</p>
+                      <p className="text-sm text-gray-600">
+                        The standard chunk of lorem
+                      </p>
                       <span className="text-xs text-gray-400">5 sec ago</span>
                     </div>
                   </a>
-                  {/* Thêm các mục tin nhắn khác nếu cần */}
                 </div>
                 <div className="p-3 text-center border-t">
-                  <a href="#" className="text-blue-500 hover:text-blue-700 text-sm">View All Messages</a>
+                  <a
+                    href="#"
+                    className="text-blue-500 hover:text-blue-700 text-sm"
+                  >
+                    View All Messages
+                  </a>
                 </div>
               </div>
             </li>
@@ -136,7 +179,11 @@ const Header = () => {
 
           <div className="relative group">
             <a href="#" className="flex items-center">
-              <img src={avatar} className="w-10 h-10 rounded-full" alt="user avatar" />
+              <img
+                src={avatar}
+                className="w-10 h-10 rounded-full"
+                alt="user avatar"
+              />
               <div className="ml-3 hidden md:block">
                 <p className="font-medium">Pauline Seitz</p>
                 <p className="text-sm text-gray-600">Web Designer</p>
