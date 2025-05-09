@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   MapContainer,
   TileLayer,
@@ -9,19 +9,21 @@ import {
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import PropTypes from 'prop-types';
 
 delete L.Icon.Default.prototype._getIconUrl;
 
-const sosIcon = new L.Icon({
-  iconUrl:
-    'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-  shadowUrl:
-    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
+const createIcon = (color) => {
+  return new L.Icon({
+    iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
+    shadowUrl:
+      'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  });
+};
 
 const MapComponent = ({ center, zoom, markers }) => {
   const mapStyles = {
@@ -81,20 +83,20 @@ const MapComponent = ({ center, zoom, markers }) => {
         <AttributionControl position="bottomright" prefix={false} />
 
         {markers.map((marker, index) => (
-          <Marker key={index} position={marker.position} icon={sosIcon}>
+          <Marker
+            key={index}
+            position={marker.position}
+            icon={createIcon(marker.color)}
+          >
             <Popup>
               <div className="p-2">
-                <div className="font-semibold mb-2">{marker.popupText}</div>
+                <div className="font-semibold mb-2">{marker.popup}</div>
                 <div className="text-sm text-gray-600">
-                  <div className="mb-1">
-                    <span className="font-medium">Time:</span> {marker.time}
-                  </div>
-                  <div className="mb-1">
-                    <span className="font-medium">Type:</span> {marker.type}
-                  </div>
                   <div>
                     <span className="font-medium">Status:</span>{' '}
-                    <span className="text-red-500">{marker.status}</span>
+                    <span className={`text-${marker.color}-500`}>
+                      {marker.status}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -104,6 +106,19 @@ const MapComponent = ({ center, zoom, markers }) => {
       </MapContainer>
     </div>
   );
+};
+
+MapComponent.propTypes = {
+  center: PropTypes.arrayOf(PropTypes.number).isRequired,
+  zoom: PropTypes.number.isRequired,
+  markers: PropTypes.arrayOf(
+    PropTypes.shape({
+      position: PropTypes.arrayOf(PropTypes.number).isRequired,
+      popup: PropTypes.string.isRequired,
+      status: PropTypes.string.isRequired,
+      color: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
 };
 
 export default MapComponent;

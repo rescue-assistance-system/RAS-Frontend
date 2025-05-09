@@ -7,7 +7,7 @@ import FirstAidManagement from '../pages/FirstAidManagement';
 // import Register from '../pages/Register';
 import AuthLayout from '../layouts/AuthLayout';
 import PublicRoute from './PublicRoutes';
-import ProtectedRoute from './protectedRoutes';
+import ProtectedRoute from './ProtectedRoutes';
 import LoginPage from '../pages/Login';
 import CoordinatorManagement from '../pages/CoordinatorManagement';
 

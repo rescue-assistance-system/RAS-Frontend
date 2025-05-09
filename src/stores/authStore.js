@@ -4,12 +4,12 @@ import axios from 'axios';
 
 const useAuthStore = create((set) => ({
   user: null,
-  token: null,
-  refreshToken: null,
+  token: localStorage.getItem('accessToken'),
+  refreshToken: localStorage.getItem('refreshToken'),
   role: null,
   isLoading: false,
   error: null,
-  isLoggedIn: false,
+  isLoggedIn: !!localStorage.getItem('accessToken'),
 
   login: async (email, password, deviceId) => {
     set({ isLoading: true, error: null });

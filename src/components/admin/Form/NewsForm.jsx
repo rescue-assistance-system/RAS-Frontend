@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Save, X, Upload } from 'lucide-react';
 import PropTypes from 'prop-types';
 
@@ -14,6 +14,19 @@ const NewsForm = ({ onBack, onSubmit, initialData = null }) => {
   );
 
   const [imagePreviews, setImagePreviews] = useState(initialData?.images || []);
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        title: initialData.title,
+        description: initialData.description,
+        category: initialData.category,
+        images: initialData.images || [],
+        status: initialData.status,
+      });
+      setImagePreviews(initialData.images || []);
+    }
+  }, [initialData]);
+  console.log('formData', formData);
 
   const handleSubmit = (e) => {
     e.preventDefault();

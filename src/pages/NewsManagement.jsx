@@ -93,21 +93,86 @@ const NewsManagement = () => {
   const handleEdit = async (id) => {
     try {
       const response = await newsService.getNewsById(id);
-      setEditingNews(response);
+      const newsDetails = response.data;
+      setEditingNews({
+        id: newsDetails.id,
+        title: newsDetails.title,
+        description: newsDetails.content,
+        category: newsDetails.category_id,
+        image: newsDetails.image_url,
+        status: newsDetails.status,
+        time: new Date(newsDetails.created_at).toLocaleString(),
+      });
       setShowForm(true);
     } catch (error) {
       console.error('Error fetching news by ID:', error);
     }
   };
 
-  const handleFormSubmit = (updatedNews) => {
-    setNewsItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === updatedNews.id ? updatedNews : item,
-      ),
-    );
-    setShowForm(false);
-    setEditingNews(null);
+  // const handleFormSubmit = (updatedNews) => {
+  //   setNewsItems((prevItems) =>
+  //     prevItems.map((item) =>
+  //       item.id === updatedNews.id ? updatedNews : item,
+  //     ),
+  //   );
+  //   setShowForm(false);
+  //   setEditingNews(null);
+  // };
+
+  const handleFormSubmit = async (formData) => {
+    try {
+      if (editingNews) {
+        await newsService.updateNewsById(editingNews.id, {
+          title: formData.title,
+          content: formData.description,
+          category_id: categories.find((cat) => cat.name === formData.category)
+            ?.id,
+          image_url: formData.images[0],
+          status: formData.status,
+        });
+        setNewsItems((prevItems) =>
+          prevItems.map((item) =>
+            item.id === editingNews.id
+              ? {
+                  ...item,
+                  title: formData.title,
+                  description: formData.description,
+                  category: formData.category,
+                  image: formData.images[0],
+                  status: formData.status,
+                }
+              : item,
+          ),
+        );
+      } else {
+        const createdNews = await newsService.createNews({
+          title: formData.title,
+          content: formData.description,
+          category_id: categories.find((cat) => cat.name === formData.category)
+            ?.id,
+          image_url: formData.images[0],
+          status: formData.status,
+        });
+
+        setNewsItems((prevItems) => [
+          {
+            id: createdNews.data.id,
+            title: createdNews.data.title,
+            description: createdNews.data.content,
+            category: formData.category,
+            image: createdNews.data.image_url,
+            status: createdNews.data.status,
+            time: new Date(createdNews.data.created_at).toLocaleString(),
+          },
+          ...prevItems,
+        ]);
+      }
+
+      setShowForm(false);
+      setEditingNews(null);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
   };
 
   return (
@@ -123,9 +188,7 @@ const NewsManagement = () => {
         />
       ) : (
         <>
-          {/* Sticky Container for Header and Filters */}
           <div className="sticky top-0 z-10 bg-white pb-6">
-            {/* Header */}
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">News Management</h2>
               <button

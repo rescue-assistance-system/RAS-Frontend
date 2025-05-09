@@ -44,7 +44,7 @@ const NewsCard = ({ news, onEdit, onDelete }) => (
         </div>
         <div className="flex items-center gap-2 ml-auto">
           <button
-            onClick={() => onEdit(news)}
+            onClick={() => onEdit(news.id)}
             className="p-1.5 text-gray-600 hover:text-blue-600 rounded-full hover:bg-blue-50"
           >
             <Edit className="w-4 h-4" />
