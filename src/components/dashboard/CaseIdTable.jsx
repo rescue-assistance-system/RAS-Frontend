@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { formatDate } from '../../utils/dateUtils';
-import DetailModal from './DetailModal';
+import DetailModal from '../dashboard/modals/DetailModal';
 import Pagination from '../common/Pagination';
 import StatusBadge from '../common/StatusBadge';
 
-const CaseIdTable = ({ caseIds, onAssignClick }) => {
+const CaseIdTable = ({ caseIds, onAssignClick, sosRequests, rescueTeams }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedCase, setSelectedCase] = useState(null);
@@ -32,6 +32,8 @@ const CaseIdTable = ({ caseIds, onAssignClick }) => {
         isOpen={isDetailModalOpen}
         onClose={handleCloseDetailModal}
         caseData={selectedCase}
+        sosRequests={sosRequests || []}
+        rescueTeams={rescueTeams || []}
       />
       <div className="font-semibold text-gray-700 mb-2 text-xl text-center">
         Case ID List
@@ -97,6 +99,12 @@ const CaseIdTable = ({ caseIds, onAssignClick }) => {
 CaseIdTable.propTypes = {
   caseIds: PropTypes.array.isRequired,
   onAssignClick: PropTypes.func.isRequired,
+  sosRequests: PropTypes.array,
+  rescueTeams: PropTypes.array,
+};
+CaseIdTable.defaultProps = {
+  sosRequests: [],
+  rescueTeams: [],
 };
 
 export default CaseIdTable;

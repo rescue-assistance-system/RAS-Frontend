@@ -1,124 +1,110 @@
 import React from 'react';
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  LayersControl,
-  AttributionControl,
-} from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import PropTypes from 'prop-types';
+import 'leaflet/dist/leaflet.css';
 
-delete L.Icon.Default.prototype._getIconUrl;
-
-const createIcon = (color) => {
-  return new L.Icon({
-    iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
-    shadowUrl:
-      'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
+// ✅ Tạo custom icons
+const createCustomIcon = (emoji, color) => {
+  return L.divIcon({
+    html: `
+      <div style="
+        background-color: ${color};
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        border: 3px solid white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      ">
+        ${emoji}
+      </div>
+    `,
+    className: 'custom-marker',
+    iconSize: [40, 40],
+    iconAnchor: [20, 20],
+    popupAnchor: [0, -20],
   });
 };
 
+const ICONS = {
+  // Team icons
+  teamAvailable: createCustomIcon('🚑', '#10B981'), // Green
+  teamBusy: createCustomIcon('🚑', '#EF4444'), // Red
+
+  // Case icons
+  casePending: createCustomIcon('⚠️', '#F59E0B'), // Orange/Yellow
+  caseAccepted: createCustomIcon('🔄', '#F97316'), // Orange
+  caseReady: createCustomIcon('🚨', '#8B5CF6'), // Purple
+};
+
 const MapComponent = ({ center, zoom, markers }) => {
-  const mapStyles = {
-    streets: {
-      url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      attribution: '&copy; OpenStreetMap contributors',
-      name: 'OpenStreetMap Streets',
-    },
-    satellite: {
-      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      attribution:
-        '&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
-      name: 'Satellite',
-    },
-    dark: {
-      url: 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png',
-      attribution:
-        '&copy; Stadia Maps, &copy; OpenMapTiles &copy; OpenStreetMap contributors',
-      name: 'Dark Mode',
-    },
-    terrain: {
-      url: 'https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.png',
-      attribution:
-        'Map tiles by Stamen Design, CC BY 3.0 — Map data &copy; OpenStreetMap',
-      name: 'Terrain',
-    },
+  const getMarkerIcon = (marker) => {
+    if (marker.type === 'team') {
+      return marker.status === 'available'
+        ? ICONS.teamAvailable
+        : ICONS.teamBusy;
+    } else if (marker.type === 'case') {
+      switch (marker.status) {
+        case 'pending':
+          return ICONS.casePending;
+        case 'accepted':
+          return ICONS.caseAccepted;
+        case 'ready':
+          return ICONS.caseReady;
+        default:
+          return ICONS.casePending;
+      }
+    }
+    return ICONS.teamAvailable;
   };
 
   return (
-    <div
-      style={{
-        height: '100%',
-        width: '100%',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-      }}
+    <MapContainer
+      center={center}
+      zoom={zoom}
+      style={{ height: '100%', width: '100%' }}
     >
-      <MapContainer
-        center={center}
-        zoom={zoom}
-        style={{ height: '100%', width: '100%' }}
-        attributionControl={false}
-      >
-        <LayersControl position="topright">
-          {Object.entries(mapStyles).map(([key, style]) => (
-            <LayersControl.BaseLayer
-              key={key}
-              checked={key === 'streets'}
-              name={style.name}
-            >
-              <TileLayer url={style.url} attribution={style.attribution} />
-            </LayersControl.BaseLayer>
-          ))}
-        </LayersControl>
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />
 
-        <AttributionControl position="bottomright" prefix={false} />
-
-        {markers.map((marker, index) => (
-          <Marker
-            key={index}
-            position={marker.position}
-            icon={createIcon(marker.color)}
-          >
-            <Popup>
-              <div className="p-2">
-                <div className="font-semibold mb-2">{marker.popup}</div>
-                <div className="text-sm text-gray-600">
-                  <div>
-                    <span className="font-medium">Status:</span>{' '}
-                    <span className={`text-${marker.color}-500`}>
-                      {marker.status}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
-      </MapContainer>
-    </div>
+      {markers.map((marker, index) => (
+        <Marker
+          key={`${marker.type}-${index}`}
+          position={marker.position}
+          icon={getMarkerIcon(marker)}
+        >
+          <Popup>
+            <div>
+              <strong>
+                {marker.type === 'team' ? 'Rescue Team' : 'SOS Case'}
+              </strong>
+              <br />
+              {marker.popup}
+              {marker.type === 'team' && marker.teamName && marker.status && (
+                <>
+                  <br />
+                  <strong>Team:</strong> {marker.teamName}
+                  <br />
+                  <strong>Status:</strong> {marker.status}
+                </>
+              )}
+              {marker.type === 'case' && marker.caseId && (
+                <>
+                  <br />
+                  <strong>Case ID:</strong> {marker.caseId}
+                </>
+              )}
+            </div>
+          </Popup>
+        </Marker>
+      ))}
+    </MapContainer>
   );
-};
-
-MapComponent.propTypes = {
-  center: PropTypes.arrayOf(PropTypes.number).isRequired,
-  zoom: PropTypes.number.isRequired,
-  markers: PropTypes.arrayOf(
-    PropTypes.shape({
-      position: PropTypes.arrayOf(PropTypes.number).isRequired,
-      popup: PropTypes.string.isRequired,
-      status: PropTypes.string.isRequired,
-      color: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
 };
 
 export default MapComponent;

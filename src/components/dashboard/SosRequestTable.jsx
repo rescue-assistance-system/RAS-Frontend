@@ -23,7 +23,7 @@ const SosRequestTable = ({ sosRequests }) => {
             <th className="px-2 py-2 text-left">SOS ID</th>
             <th className="px-2 py-2 text-left">Sender</th>
             <th className="px-2 py-2 text-left">Location</th>
-            <th className="px-2 py-2 text-left">Severity</th>
+            <th className="px-2 py-2 text-left">Nearest Team</th>
             <th className="px-2 py-2 text-left">Created At</th>
           </tr>
         </thead>
@@ -33,7 +33,7 @@ const SosRequestTable = ({ sosRequests }) => {
               <td className="px-2 py-2 text-left">{s.id}</td>
               <td className="px-2 py-2 text-left">{s.sender}</td>
               <td className="px-2 py-2 text-left">{s.location}</td>
-              <td className="px-2 py-2 text-left">{s.severity}</td>
+              <td className="px-2 py-2 text-left">{s.nearest_team_ids}</td>
               <td className="px-2 py-2 text-left">{formatDate(s.createdAt)}</td>
             </tr>
           ))}

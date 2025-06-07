@@ -46,7 +46,7 @@ const RescueTeamsTable = ({ rescueTeams }) => {
             </th>
             <th className="px-2 py-2 text-left">Team Name</th>
             <th className="px-2 py-2 text-left">Description</th>
-            <th className="px-2 py-2 text-wrap">Address</th>
+            <th className="px-2 py-2 text-wrap">Email</th>
             <th className="px-2 py-2 text-wrap">Phone Number</th>
             <th className="px-2 py-2 text-left">Status</th>
           </tr>
@@ -71,10 +71,10 @@ const RescueTeamsTable = ({ rescueTeams }) => {
                 {t.description || '-'}
               </td>
               <td className="px-2 py-2 text-gray-700 align-top">
-                {t.address || '-'}
+                {t.email || '-'}
               </td>
               <td className="px-2 py-2 text-gray-700 align-top">
-                {t.phone_number || '-'}
+                {t.phone || '-'}
               </td>
               <td className="px-2 py-2 text-left align-top">
                 <span

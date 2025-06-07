@@ -10,3 +10,7 @@ export const formatDate = (isoString) => {
   const seconds = String(date.getSeconds()).padStart(2, '0');
   return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 };
+
+export const formatCoordinates = (lat, lng) => {
+  return `${lat.toFixed(3)}°N, ${lng.toFixed(3)}°E`;
+};
