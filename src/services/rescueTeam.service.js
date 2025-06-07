@@ -4,7 +4,9 @@ const API_URL = 'http://localhost:8081/api/admin';
 
 const getAllRescueTeams = async () => {
   try {
-    const response = await axios.get(API_URL + '/rescue-teams');
+    const response = await axios.get(
+      'http://localhost:8081/api/rescue-team/allRescueTeams',
+    );
     console.log('response', response);
     if (response.status === 200) {
       return response.data.data;

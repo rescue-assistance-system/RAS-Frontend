@@ -44,6 +44,15 @@ const Sidebar = () => {
               <span className="text-sm">Dashboard</span>
             </Link>
           </li>
+          <li>
+            <Link
+              to="/analytics"
+              className="flex items-center p-2 rounded-lg hover:bg-blue-200 hover:text-blue-500 transition-all ml-3.5"
+            >
+              <i className="bx bx-bar-chart-alt text-xl mr-3"></i>
+              <span className="text-sm">Analytics</span>
+            </Link>
+          </li>
 
           <li>
             <button
@@ -114,16 +123,8 @@ const Sidebar = () => {
             )}
           </li>
 
-          <li>
-            <Link
-              to="/analytics"
-              className="flex items-center p-2 rounded-lg hover:bg-blue-200 hover:text-blue-500 transition-all ml-3.5"
-            >
-              <i className="bx bx-bar-chart-alt text-xl mr-3"></i>
-              <span className="text-sm">Analytics</span>
-            </Link>
-          </li>
-          <li>
+         
+          {/* <li>
             <Link
               to="/user-management"
               className="flex items-center p-2 rounded-lg hover:bg-blue-200 hover:text-blue-500 transition-all ml-3.5"
@@ -131,7 +132,7 @@ const Sidebar = () => {
               <i className="bx bx-user text-xl mr-3"></i>
               <span className="text-sm">User Management</span>
             </Link>
-          </li>
+          </li> */}
 
           {/* <li>
             <button

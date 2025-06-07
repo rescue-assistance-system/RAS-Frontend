@@ -39,6 +39,51 @@ const getNewsById = async (id) => {
   }
 };
 
+const uploadFile = async (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const response = await axios.post(
+      'http://localhost:8081/api/cloudinary/file',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    );
+    console.log('response', response);
+    console.log('response.data', response.data.data.url);
+    return response.data.data.url;
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    throw error;
+  }
+};
+
+const uploadFiles = async (files) => {
+  const formData = new FormData();
+  files.forEach((file) => {
+    formData.append('files', file); 
+  });
+
+  try {
+    const response = await axios.post(
+      'http://localhost:8081/api/cloudinary/upload-multiple',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    return response.data.data.map(item => item.url);
+  } catch (error) {
+    console.error('Error uploading files:', error);
+    throw error;
+  }
+};
 const createNews = async (data) => {
   try {
     const response = await axios.post(API_URL, data);
@@ -52,6 +97,8 @@ const createNews = async (data) => {
 const updateNewsById = async (id, data) => {
   try {
     const response = await axios.put(`${API_URL}/${id}`, data);
+    console.log('response', response);
+    console.log('response.data', response.data);
     return response.data;
   } catch (error) {
     console.error('Error updating news:', error);
@@ -73,6 +120,8 @@ export default {
   getAllCategories,
   getAllNews,
   getNewsById,
+  uploadFile,
+  uploadFiles,
   createNews,
   updateNewsById,
   deleteNewsById,

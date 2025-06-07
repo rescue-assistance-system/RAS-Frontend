@@ -33,6 +33,7 @@ const NewsManagement = () => {
               ?.name || 'Unknown',
           image: news.image_url,
           status: 'Published',
+          source: news.source,
           time: new Date(news.created_at).toLocaleString(),
         }));
         setNewsItems(formattedNews);
@@ -100,6 +101,7 @@ const NewsManagement = () => {
         description: newsDetails.content,
         category: newsDetails.category_id,
         image: newsDetails.image_url,
+        source: newsDetails.source,
         status: newsDetails.status,
         time: new Date(newsDetails.created_at).toLocaleString(),
       });
@@ -109,16 +111,17 @@ const NewsManagement = () => {
     }
   };
 
-  // const handleFormSubmit = (updatedNews) => {
-  //   setNewsItems((prevItems) =>
-  //     prevItems.map((item) =>
-  //       item.id === updatedNews.id ? updatedNews : item,
-  //     ),
-  //   );
-  //   setShowForm(false);
-  //   setEditingNews(null);
-  // };
-
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this article?'))
+      return;
+    try {
+      await newsService.deleteNewsById(id);
+      setNewsItems((prev) => prev.filter((item) => item.id !== id));
+    } catch (error) {
+      alert('Delete failed!');
+      console.error('Error deleting news:', error);
+    }
+  };
   const handleFormSubmit = async (formData) => {
     try {
       if (editingNews) {
@@ -127,7 +130,8 @@ const NewsManagement = () => {
           content: formData.description,
           category_id: categories.find((cat) => cat.name === formData.category)
             ?.id,
-          image_url: formData.images[0],
+          image_url: formData.images,
+          source: formData.source,
           status: formData.status,
         });
         setNewsItems((prevItems) =>
@@ -138,7 +142,8 @@ const NewsManagement = () => {
                   title: formData.title,
                   description: formData.description,
                   category: formData.category,
-                  image: formData.images[0],
+                  image: formData.images,
+                  source: formData.source,
                   status: formData.status,
                 }
               : item,
@@ -150,7 +155,8 @@ const NewsManagement = () => {
           content: formData.description,
           category_id: categories.find((cat) => cat.name === formData.category)
             ?.id,
-          image_url: formData.images[0],
+          image_url: formData.images,
+          source: formData.source,
           status: formData.status,
         });
 
@@ -161,6 +167,7 @@ const NewsManagement = () => {
             description: createdNews.data.content,
             category: formData.category,
             image: createdNews.data.image_url,
+            source: formData.source,
             status: createdNews.data.status,
             time: new Date(createdNews.data.created_at).toLocaleString(),
           },
@@ -239,7 +246,15 @@ const NewsManagement = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
             {currentItems.map((news) => (
-              <NewsCard key={news.id} news={news} onEdit={handleEdit} />
+              <NewsCard
+                key={news.id}
+                news={{
+                  ...news,
+                  image: Array.isArray(news.image) ? news.image[0] : news.image,
+                }}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
             ))}
           </div>
           {sortedNews.length === 0 && (

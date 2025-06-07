@@ -10,6 +10,7 @@ import PublicRoute from './PublicRoutes';
 import ProtectedRoute from './ProtectedRoutes';
 import LoginPage from '../pages/Login';
 import CoordinatorManagement from '../pages/CoordinatorManagement';
+import Analytics from '../pages/Analytics';
 
 const AppRoutes = () => {
   return (
@@ -58,7 +59,7 @@ const AppRoutes = () => {
         </Route>
 
         <Route path="analytics">
-          <Route index element={<div className="p-4">Analytics Page</div>} />
+          <Route index element={<Analytics/>} />
         </Route>
 
         <Route path="user-management">

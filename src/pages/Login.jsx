@@ -9,7 +9,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login, isLoading, error } = useAuthStore();
-  const deviceId = 'iphone15';
+  const deviceId = 'iphone12';
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {

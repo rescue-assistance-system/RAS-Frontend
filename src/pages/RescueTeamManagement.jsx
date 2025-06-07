@@ -24,7 +24,9 @@ const RescueTeamManagement = () => {
   const handleDelete = async (teamId) => {
     try {
       await rescueTeamService.deleteRescueTeam(teamId);
-      setRescueTeams((prevTeams) => prevTeams.filter((team) => team.id !== teamId));
+      setRescueTeams((prevTeams) =>
+        prevTeams.filter((team) => team.id !== teamId),
+      );
       console.log(`Team with ID ${teamId} deleted successfully.`);
     } catch (error) {
       console.error(`Error deleting team with ID ${teamId}:`, error);
@@ -32,14 +34,26 @@ const RescueTeamManagement = () => {
   };
 
   const getStatusBadge = (status) => {
+    const normalized = status ? status.toUpperCase() : '';
     const statusStyles = {
-      AVAILABLE: 'bg-green-100 text-green-800',
-      ON_MISSION: 'bg-blue-100 text-blue-800',
-      STANDBY: 'bg-yellow-100 text-yellow-800',
+      AVAILABLE: 'bg-green-200 text-green-800 border border-green-400',
+      BUSY: 'bg-red-200 text-red-800 border border-red-400',
+      ON_MISSION: 'bg-blue-200 text-blue-800 border border-blue-400',
+      STANDBY: 'bg-yellow-200 text-yellow-800 border border-yellow-400',
     };
-    return `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyles[status] || 'bg-gray-100'}`;
+    // Upcase chữ cái đầu, các chữ sau thường
+    const label = status
+      ? status.charAt(0).toUpperCase() +
+        status.slice(1).toLowerCase().replace('_', ' ')
+      : '';
+    return (
+      <span
+        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${statusStyles[normalized] || 'bg-gray-200 text-gray-800 border border-gray-400'}`}
+      >
+        {label}
+      </span>
+    );
   };
-
   const [rescueTeams, setRescueTeams] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
@@ -47,7 +61,7 @@ const RescueTeamManagement = () => {
         const data = await rescueTeamService.getAllRescueTeams();
         const filtered = data.map((user) => ({
           id: user.id,
-          username: user.username,
+          username: user.team_name,
           email: user.email,
           status: user.status,
           phone: user.phone,
@@ -150,9 +164,7 @@ const RescueTeamManagement = () => {
                       {user.username}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={getStatusBadge(user.status)}>
-                        {user.status}
-                      </span>
+                      {getStatusBadge(user.status)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {user.phone}
@@ -173,7 +185,8 @@ const RescueTeamManagement = () => {
                         <button className="text-blue-600 hover:text-blue-900">
                           <i className="bx bx-edit-alt text-xl"></i>
                         </button>
-                        <button className="text-red-600 hover:text-red-900"
+                        <button
+                          className="text-red-600 hover:text-red-900"
                           onClick={() => handleDelete(user.id)}
                         >
                           <i className="bx bx-trash text-xl"></i>

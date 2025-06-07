@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Save, X, Upload } from 'lucide-react';
 import PropTypes from 'prop-types';
+import newsService from '../../../services/news.service';
 
 const FirstAidForm = ({ onBack, onSubmit, initialData = null }) => {
   const [formData, setFormData] = useState(
@@ -8,55 +9,75 @@ const FirstAidForm = ({ onBack, onSubmit, initialData = null }) => {
       title: '',
       description: '',
       category: 'CPR',
-      images: [],
+      image: [],
       status: 'Draft',
-      symptoms: [],
     },
   );
 
-  const [imagePreviews, setImagePreviews] = useState(initialData?.images || []);
-  const [symptomInput, setSymptomInput] = useState('');
+  const [imagePreviews, setImagePreviews] = useState(
+    Array.isArray(initialData?.image)
+      ? initialData.image
+      : initialData?.image
+        ? [initialData.image]
+        : [],
+  );
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        title: initialData.title,
+        description: initialData.description,
+        category: initialData.category,
+        image: Array.isArray(initialData.image)
+          ? initialData.image
+          : initialData.image
+            ? [initialData.image]
+            : [],
+        status: initialData.status,
+      });
+      setImagePreviews(
+        Array.isArray(initialData.image)
+          ? initialData.image
+          : initialData.image
+            ? [initialData.image]
+            : [],
+      );
+    }
+  }, [initialData]);
+  console.log('formData', formData);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    let imageUrls = [];
+    const filesToUpload = formData.image.filter((file) => file instanceof File);
+    const oldUrls = formData.image.filter((file) => typeof file === 'string');
+    if (filesToUpload.length > 0) {
+      const uploadedUrls = await newsService.uploadFiles(filesToUpload);
+      imageUrls = [...oldUrls, ...uploadedUrls];
+    } else {
+      imageUrls = oldUrls;
+    }
+
     onSubmit({
       ...formData,
+      images: imageUrls,
       id: initialData?.id || Date.now(),
       time: initialData?.time || 'Just now',
     });
   };
-
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length > 0) {
       const newPreviews = files.map((file) => URL.createObjectURL(file));
       setImagePreviews([...imagePreviews, ...newPreviews]);
-      setFormData({ ...formData, images: [...formData.images, ...files] });
+      setFormData({ ...formData, image: [...formData.image, ...files] });
     }
   };
 
   const removeImage = (index) => {
     const newPreviews = imagePreviews.filter((_, i) => i !== index);
-    const newImages = formData.images.filter((_, i) => i !== index);
+    const newImages = formData.image.filter((_, i) => i !== index);
     setImagePreviews(newPreviews);
-    setFormData({ ...formData, images: newImages });
-  };
-
-  const addSymptom = () => {
-    if (symptomInput.trim()) {
-      setFormData({
-        ...formData,
-        symptoms: [...(formData.symptoms || []), symptomInput.trim()],
-      });
-      setSymptomInput('');
-    }
-  };
-
-  const removeSymptom = (index) => {
-    setFormData({
-      ...formData,
-      symptoms: formData.symptoms.filter((_, i) => i !== index),
-    });
+    setFormData({ ...formData, image: newImages });
   };
 
   return (
@@ -164,51 +185,6 @@ const FirstAidForm = ({ onBack, onSubmit, initialData = null }) => {
             </select>
           </div>
 
-          <div className="text-left">
-            <label className="block text-sm font-medium text-gray-700 mb-1 text-left">
-              Symptoms
-            </label>
-            <div className="flex gap-2 mb-2">
-              <input
-                type="text"
-                className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={symptomInput}
-                onChange={(e) => setSymptomInput(e.target.value)}
-                placeholder="Add a symptom"
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    addSymptom();
-                  }
-                }}
-              />
-              <button
-                type="button"
-                onClick={addSymptom}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-              >
-                Add
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {formData.symptoms?.map((symptom, index) => (
-                <span
-                  key={index}
-                  className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full flex items-center gap-2"
-                >
-                  {symptom}
-                  <button
-                    type="button"
-                    onClick={() => removeSymptom(index)}
-                    className="text-gray-500 hover:text-red-500"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          </div>
-
           <div className="flex justify-end gap-3">
             <button
               type="button"
@@ -301,7 +277,6 @@ FirstAidForm.propTypes = {
     images: PropTypes.array,
     status: PropTypes.string,
     time: PropTypes.string,
-    symptoms: PropTypes.arrayOf(PropTypes.string),
   }),
 };
 

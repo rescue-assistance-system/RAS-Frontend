@@ -1,56 +1,86 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Save, X, Upload } from 'lucide-react';
 import PropTypes from 'prop-types';
-
+import newsService from '../../../services/news.service';
 const NewsForm = ({ onBack, onSubmit, initialData = null }) => {
   const [formData, setFormData] = useState(
     initialData || {
       title: '',
       description: '',
       category: 'Weather',
-      images: [],
+      image: [],
+      source: '',
       status: 'Draft',
     },
   );
 
-  const [imagePreviews, setImagePreviews] = useState(initialData?.images || []);
+  const [imagePreviews, setImagePreviews] = useState(
+    Array.isArray(initialData?.image)
+      ? initialData.image
+      : initialData?.image
+        ? [initialData.image]
+        : [],
+  );
+
   useEffect(() => {
     if (initialData) {
       setFormData({
         title: initialData.title,
         description: initialData.description,
         category: initialData.category,
-        images: initialData.images || [],
+        image: Array.isArray(initialData.image)
+          ? initialData.image
+          : initialData.image
+            ? [initialData.image]
+            : [],
+        source: initialData.source,
         status: initialData.status,
       });
-      setImagePreviews(initialData.images || []);
+      setImagePreviews(
+        Array.isArray(initialData.image)
+          ? initialData.image
+          : initialData.image
+            ? [initialData.image]
+            : [],
+      );
     }
   }, [initialData]);
   console.log('formData', formData);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    let imageUrls = [];
+    // Lọc ra các file chưa upload
+    const filesToUpload = formData.image.filter((file) => file instanceof File);
+    const oldUrls = formData.image.filter((file) => typeof file === 'string');
+    if (filesToUpload.length > 0) {
+      const uploadedUrls = await newsService.uploadFiles(filesToUpload);
+      imageUrls = [...oldUrls, ...uploadedUrls];
+    } else {
+      imageUrls = oldUrls;
+    }
+
     onSubmit({
       ...formData,
+      images: imageUrls,
       id: initialData?.id || Date.now(),
       time: initialData?.time || 'Just now',
     });
   };
-
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length > 0) {
       const newPreviews = files.map((file) => URL.createObjectURL(file));
       setImagePreviews([...imagePreviews, ...newPreviews]);
-      setFormData({ ...formData, images: [...formData.images, ...files] });
+      setFormData({ ...formData, image: [...formData.image, ...files] });
     }
   };
 
   const removeImage = (index) => {
     const newPreviews = imagePreviews.filter((_, i) => i !== index);
-    const newImages = formData.images.filter((_, i) => i !== index);
+    const newimage = formData.image.filter((_, i) => i !== index);
     setImagePreviews(newPreviews);
-    setFormData({ ...formData, images: newImages });
+    setFormData({ ...formData, image: newimage });
   };
 
   return (
@@ -72,7 +102,7 @@ const NewsForm = ({ onBack, onSubmit, initialData = null }) => {
       <div className="flex gap-10">
         <form onSubmit={handleSubmit} className="flex-1 space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 text-left">
               Title
             </label>
             <input
@@ -88,7 +118,7 @@ const NewsForm = ({ onBack, onSubmit, initialData = null }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 text-left">
               Description
             </label>
             <textarea
@@ -104,7 +134,7 @@ const NewsForm = ({ onBack, onSubmit, initialData = null }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 text-left">
               Category
             </label>
             <select
@@ -121,7 +151,22 @@ const NewsForm = ({ onBack, onSubmit, initialData = null }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 text-left">
+              Source
+            </label>
+            <input
+              type="text"
+              required
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.source}
+              onChange={(e) =>
+                setFormData({ ...formData, source: e.target.value })
+              }
+              placeholder="Enter article source"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1 text-left">
               Status
             </label>
             <select
@@ -154,11 +199,11 @@ const NewsForm = ({ onBack, onSubmit, initialData = null }) => {
             </button>
           </div>
         </form>
-        <div className="w-135">
+        <div className="w-135 mt-6.5">
           <div className="sticky top-6">
             <div className="bg-white p-4 rounded-lg border">
               <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Article Images
+                Article image
               </h3>
               <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
                 <div className="space-y-1 text-center">
@@ -194,7 +239,11 @@ const NewsForm = ({ onBack, onSubmit, initialData = null }) => {
                   <div key={index} className="relative inline-block">
                     <div className="border-2 border-gray-200 rounded-lg p-1">
                       <img
-                        src={preview}
+                        src={
+                          typeof preview === 'string'
+                            ? preview
+                            : URL.createObjectURL(preview)
+                        }
                         alt={`Preview ${index + 1}`}
                         className="h-24 w-24 object-cover rounded-lg"
                       />
@@ -225,7 +274,8 @@ NewsForm.propTypes = {
     title: PropTypes.string,
     description: PropTypes.string,
     category: PropTypes.string,
-    images: PropTypes.array,
+    image: PropTypes.array,
+    source: PropTypes.string,
     status: PropTypes.string,
     time: PropTypes.string,
   }),

@@ -7,9 +7,9 @@ const SOCKET_URL = 'ws://localhost:8081';
 const getAllSosForCoordinator = async () => {
   try {
     const response = await axios.get(API_URL + '/sos');
-    console.log('response', response);
+    console.log('responseSOS', response.data.status);
     if (response.status === 200) {
-      return response.data.data;
+      return response.data.status;
     } else {
       throw new Error('Failed to fetch rescue teams');
     }
@@ -63,16 +63,15 @@ const getRescueTeamLocations = async () => {
     throw error;
   }
 };
-const deleteCoordinator = async (id) => {
+const notifyRescueTeam = async (data) => {
   try {
-    const response = await axios.delete(API_URL + `/coordinators/${id}`);
+    const response = await axios.post(API_URL + '/notify-rescue-team', data);
     return response.data;
   } catch (error) {
-    console.error('Error deleting coordinator:', error);
+    console.error('Error updating coordinator:', error);
     throw error;
   }
 };
-
 const socket = io(SOCKET_URL);
 const registerSocket = (userId) => {
   console.log('Register');
@@ -92,5 +91,5 @@ export default {
   getRescueTeamLocations,
   socket,
   registerSocket,
-  deleteCoordinator,
+  notifyRescueTeam,
 };
