@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { formatDate } from '../../utils/dateUtils';
-import DetailModal from '../dashboard/modals/DetailModal';
-import Pagination from '../common/Pagination';
-import StatusBadge from '../common/StatusBadge';
+import { formatDate } from '../../../utils/dateUtils';
+import DetailModal from '../modals/DetailModal';
+import Pagination from '../../common/Pagination';
+import StatusBadge from '../../common/StatusBadge';
 
 const CaseIdTable = ({ caseIds, onAssignClick, sosRequests, rescueTeams }) => {
   const [currentPage, setCurrentPage] = useState(1);

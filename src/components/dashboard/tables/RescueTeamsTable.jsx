@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import Pagination from '../common/Pagination';
+import Pagination from '../../common/Pagination';
 
 const RescueTeamsTable = ({ rescueTeams }) => {
   const [selected, setSelected] = useState([]);

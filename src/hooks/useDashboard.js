@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode';
 import sosCoordinatorService from '../services/sos.coordinator.service';
-import rescueTeamService from '../services/rescueTeam.service';
 import {
   mapCaseIds,
   mapSosRequests,
@@ -131,7 +130,7 @@ Please take immediate action!
           title: 'Pending SOS',
           mainStat: `${pending} pending`,
           subStat: 'Awaiting response',
-          color: 'yellow',
+          color: 'orange',
           icon: 'FaHourglassHalf',
         },
         {
@@ -178,11 +177,11 @@ Please take immediate action!
 
       const mappedCaseIds = mapCaseIds(response);
       const mappedSosRequests = mapSosRequests(response);
-      const mappedCaseMarkers = createCaseMarkers(response); // ✅ Tạo case markers
+      const mappedCaseMarkers = createCaseMarkers(response);
 
       setCaseIds(mappedCaseIds);
       setSosRequests(mappedSosRequests);
-      setCaseMarkers(mappedCaseMarkers); // ✅ Set case markers
+      setCaseMarkers(mappedCaseMarkers);
     } catch (error) {
       console.error('Error fetching SOS data:', error);
       toast.error('Failed to fetch SOS data');
@@ -214,8 +213,7 @@ Please take immediate action!
 
   return {
     stats,
-    markers, // Team markers
-    caseMarkers, // ✅ Case markers
+    markers,
     rescueTeams,
     caseIds,
     sosRequests,

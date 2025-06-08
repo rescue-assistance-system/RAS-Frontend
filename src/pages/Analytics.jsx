@@ -486,7 +486,6 @@ const Analytics = () => {
                   else if (loc.count >= 5) iconSize = 38;
                   else if (loc.count >= 2) iconSize = 34;
 
-                  // Không hiển thị số trên marker, chỉ là chấm màu
                   const customIcon = L.divIcon({
                     className: '',
                     html: `<div style="background:${markerColor};border-radius:50%;width:${iconSize}px;height:${iconSize}px;display:flex;align-items:center;justify-content:center;border:2px solid ${borderColor};box-shadow:0 2px 8px ${borderColor}33;"></div>`,

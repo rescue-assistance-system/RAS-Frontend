@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { formatDate } from '../../utils/dateUtils';
-import Pagination from '../common/Pagination';
+import { formatDate } from '../../../utils/dateUtils';
+import Pagination from '../../common/Pagination';
 
 const SosRequestTable = ({ sosRequests }) => {
   const [currentPage, setCurrentPage] = useState(1);
