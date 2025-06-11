@@ -1,8 +1,11 @@
 import axios from 'axios';
 import { io } from 'socket.io-client';
 
-const API_URL = 'http://localhost:8081/api/sos-coordinator';
-const SOCKET_URL = 'ws://localhost:8081';
+// const API_URL = 'http://localhost:8081/api/sos-coordinator';
+const API_URL = 'https://ras-backend.onrender.com/api/sos-coordinator';
+
+// const SOCKET_URL = 'ws://localhost:8081';
+const SOCKET_URL = 'wss://ras-backend.onrender.com';
 
 const getAllSosForCoordinator = async () => {
   try {

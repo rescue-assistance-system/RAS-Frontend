@@ -1,11 +1,16 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8081/api/admin';
+// const API_URL = 'http://localhost:8081/api/admin';
 
+// const API_URL = 'http://localhost:8081/api/sos-coordinator';
+const API_URL = 'https://ras-backend.onrender.com/api/admin';
+
+// const SOCKET_URL = 'ws://localhost:8081';
+// const SOCKET_URL = 'wss://ras-backend.onrender.com';
 const getAllRescueTeams = async () => {
   try {
     const response = await axios.get(
-      'http://localhost:8081/api/rescue-team/allRescueTeams',
+      'https://ras-backend.onrender.com/api/rescue-team/allRescueTeams',
     );
     console.log('response', response);
     if (response.status === 200) {

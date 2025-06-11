@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8081/api/analytics';
+const API_URL = 'https://ras-backend.onrender.com/api/analytics';
 
 const getDashboard = async () => {
   try {

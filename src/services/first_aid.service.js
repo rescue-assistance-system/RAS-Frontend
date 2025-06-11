@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8081/api/first-aid-guides';
+const API_URL = 'https://ras-backend.onrender.com/api/first-aid-guides';
 
 const getAllCategories = async () => {
   try {
     const response = await axios.get(
-      `http://localhost:8081/api/first-aid-categories`,
+      `https://ras-backend.onrender.com/api/first-aid-categories`,
     );
     return response.data;
   } catch (error) {

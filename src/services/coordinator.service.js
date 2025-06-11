@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8081/api/admin';
+const API_URL = 'https://ras-backend.onrender.com/api/admin';
 
 const getAllCoordinators = async () => {
   try {

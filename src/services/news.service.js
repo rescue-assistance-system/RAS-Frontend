@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8081/api/news';
+const API_URL = 'https://ras-backend.onrender.com/api/news';
 
 const getAllCategories = async () => {
   try {
     const response = await axios.get(
-      `http://localhost:8081/api/news-categories`,
+      `https://ras-backend.onrender.com/api/news-categories`,
     );
     return response.data;
   } catch (error) {
@@ -45,7 +45,7 @@ const uploadFile = async (file) => {
 
   try {
     const response = await axios.post(
-      'http://localhost:8081/api/cloudinary/file',
+      'https://ras-backend.onrender.com/api/cloudinary/file',
       formData,
       {
         headers: {
@@ -70,7 +70,7 @@ const uploadFiles = async (files) => {
 
   try {
     const response = await axios.post(
-      'http://localhost:8081/api/cloudinary/upload-multiple',
+      'https://ras-backend.onrender.com/api/cloudinary/upload-multiple',
       formData,
       {
         headers: {
