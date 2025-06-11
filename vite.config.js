@@ -7,15 +7,15 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8081',
+        target: 'https://ras-backend.onrender.com',
         changeOrigin: true,
         secure: false,
       },
     },
   },
   preview: {
-    host: '0.0.0.0', 
-    port: Number(process.env.PORT) || 4173,
-    allowedHosts: ['ras-frontend.onrender.com'], 
+    host: '0.0.0.0',
+    port: process.env.PORT || 4173,
+    allowedHosts: ['ras-frontend.onrender.com'],
   },
 });
