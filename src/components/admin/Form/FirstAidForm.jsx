@@ -205,7 +205,7 @@ const FirstAidForm = ({ onBack, onSubmit, initialData = null }) => {
 
         <div className="w-135">
           <div className="sticky top-6">
-            <div className="bg-white p-4 rounded-lg border">
+            <div className="bg-white p-4 rounded-lg border mt-6">
               <h3 className="text-lg font-medium text-gray-900 mb-4">
                 Guide Images
               </h3>
