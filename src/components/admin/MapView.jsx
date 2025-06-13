@@ -42,6 +42,7 @@ const ICONS = {
 
 const MapComponent = ({ center, zoom, markers }) => {
   const getMarkerIcon = (marker) => {
+    console.log(`Marker type: ${marker.type}, status: ${marker.status}`);
     if (marker.type === 'team') {
       return marker.status === 'available'
         ? ICONS.teamAvailable

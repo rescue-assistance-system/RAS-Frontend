@@ -219,5 +219,6 @@ Please take immediate action!
     sosRequests,
     // loading,
     assignTeam,
+    caseMarkers,
   };
 };

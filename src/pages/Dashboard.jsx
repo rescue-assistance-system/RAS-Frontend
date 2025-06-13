@@ -26,7 +26,7 @@ const Dashboard = () => {
   const {
     stats,
     markers,
-    caseMarkers, 
+    caseMarkers,
     rescueTeams,
     caseIds,
     sosRequests,
@@ -50,6 +50,7 @@ const Dashboard = () => {
     ...markers.map((marker) => ({ ...marker, type: 'team' })),
     ...(caseMarkers || []).map((marker) => ({ ...marker, type: 'case' })),
   ];
+  console.log('allMarkers:', allMarkers);
 
   const handleOpenAssignModal = (caseData) => {
     setSelectedCase(caseData);
@@ -112,8 +113,7 @@ const Dashboard = () => {
           <MapComponent
             center={MAP_CONFIG.center}
             zoom={MAP_CONFIG.zoom}
-            markers={allMarkers} 
-            
+            markers={allMarkers}
           />
         </div>
       </div>
