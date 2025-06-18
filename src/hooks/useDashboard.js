@@ -9,6 +9,7 @@ import {
   createTeamMarkers,
   createCaseMarkers,
 } from '../utils/dashboardUtils';
+import { set } from 'react-hook-form';
 
 export const useDashboard = () => {
   const [stats, setStats] = useState([]);
@@ -115,6 +116,7 @@ Please take immediate action!
         ]);
 
       setMarkers(createMapMarkers(rescueTeamLocations));
+      console.log('Rescue team locations:', rescueTeamLocations);
 
       const numberOfRescueTeams = rescueTeamsResponse.status.length;
       const { total, pending, completed } = response.status;
@@ -156,15 +158,13 @@ Please take immediate action!
   // Fetch rescue teams
   const fetchRescueTeams = async () => {
     try {
-      const response = await sosCoordinatorService.getAllRescueTeams();
-      const teams = Array.isArray(response) ? response : response.data || [];
-
-      setRescueTeams(teams);
-
-      const teamMarkers = createTeamMarkers(
-        teams.filter((team) => team.latitude && team.longitude),
-      );
-      setMarkers(teamMarkers);
+      const response = await sosCoordinatorService.getRescueTeamLocations();
+      const rescueTeamsResponse =
+        await sosCoordinatorService.getAllRescueTeams();
+      console.log('Rescue teams response:', rescueTeamsResponse);
+      setRescueTeams(rescueTeamsResponse || []);
+      // const teams = Array.isArray(response) ? response : response.data || [];
+      setMarkers(createMapMarkers(response));
     } catch (error) {
       console.error('Error fetching rescue teams:', error);
     }

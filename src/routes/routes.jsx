@@ -11,11 +11,13 @@ import ProtectedRoute from './ProtectedRoutes';
 import LoginPage from '../pages/Login';
 import CoordinatorManagement from '../pages/CoordinatorManagement';
 import Analytics from '../pages/Analytics';
+import DashboardPublic from '../pages/DashboardPublic';
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/public-dashboard" element={<DashboardPublic />} />
 
       <Route element={<AuthLayout />}>
         <Route

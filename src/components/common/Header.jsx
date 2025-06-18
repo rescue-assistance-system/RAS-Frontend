@@ -163,7 +163,7 @@ const Header = () => {
             </li>
 
             <li className="relative">
-              <a
+              {/* <a
                 href="#"
                 className="text-gray-600 hover:text-gray-900 relative"
                 onClick={(e) => {
@@ -177,8 +177,8 @@ const Header = () => {
                   8
                 </span>
                 <i className="bx bx-comment text-xl"></i>
-              </a>
-              {isMessageOpen && (
+              </a> */}
+              {/* {isMessageOpen && (
                 <div
                   ref={messageRef}
                   className="absolute right-0 mt-2 bg-white shadow-lg rounded-lg w-80 z-10 max-h-96 overflow-y-auto"
@@ -217,7 +217,7 @@ const Header = () => {
                     </a>
                   </div>
                 </div>
-              )}
+              )} */}
             </li>
           </ul>
 

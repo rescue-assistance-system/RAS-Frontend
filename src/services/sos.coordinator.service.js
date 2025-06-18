@@ -30,9 +30,26 @@ const getSosById = async (id) => {
     throw error;
   }
 };
+const getAllRescueTeams = async () => {
+  try {
+    const response = await axios.get(
+      'https://ras-backend.onrender.com/api/rescue-team/allRescueTeams',
+    );
+    console.log('response', response);
+    if (response.status === 200) {
+      return response.data.data;
+    } else {
+      throw new Error('Failed to fetch rescue teams');
+    }
+  } catch (error) {
+    console.error('Error fetching rescue teams:', error);
+    throw error;
+  }
+};
 const getAvailableRescueTeams = async () => {
   try {
     const response = await axios.get(API_URL + `/rescue-teams/available`);
+    console.log('responseAvailable', response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching coordinator by ID:', error);
@@ -88,6 +105,7 @@ const registerSocket = (userId) => {
 export default {
   getAllSosForCoordinator,
   getSosById,
+  getAllRescueTeams,
   getAvailableRescueTeams,
   getSosStatistics,
   assignTeam,

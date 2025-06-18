@@ -10,6 +10,7 @@ const DetailModal = ({
   caseData,
   sosRequests,
   rescueTeams,
+  isPublic = false,
 }) => {
   const [message, setMessage] = useState('');
 
@@ -135,25 +136,26 @@ const DetailModal = ({
             </div>
           </div>
 
-          <div className="mb-6 w-full">
-            <label className="block font-semibold mb-2 text-left">
-              Send Notification:
-            </label>
-            <textarea
-              className="w-full border rounded px-3 py-2 mb-2"
-              rows="3"
-              placeholder="Enter notification message..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-            />
-            <button
-              className="w-full px-5 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white font-semibold"
-              onClick={handleNotify}
-            >
-              Send Notification
-            </button>
-          </div>
-
+          {!isPublic && (
+            <div className="mb-6 w-full">
+              <label className="block font-semibold mb-2 text-left">
+                Send Notification:
+              </label>
+              <textarea
+                className="w-full border rounded px-3 py-2 mb-2"
+                rows="3"
+                placeholder="Enter notification message..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+              />
+              <button
+                className="w-full px-5 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+                onClick={handleNotify}
+              >
+                Send Notification
+              </button>
+            </div>
+          )}
           <div className="mb-6 w-full">
             <label className="block font-semibold mb-2 text-left">
               SOS History for this Case:
@@ -205,6 +207,7 @@ DetailModal.propTypes = {
   caseData: PropTypes.object,
   sosRequests: PropTypes.array,
   rescueTeams: PropTypes.array,
+  isPublic: PropTypes.bool,
 };
 
 export default DetailModal;

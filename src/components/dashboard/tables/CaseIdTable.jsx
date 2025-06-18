@@ -5,7 +5,13 @@ import DetailModal from '../modals/DetailModal';
 import Pagination from '../../common/Pagination';
 import StatusBadge from '../../common/StatusBadge';
 
-const CaseIdTable = ({ caseIds, onAssignClick, sosRequests, rescueTeams }) => {
+const CaseIdTable = ({
+  caseIds,
+  onAssignClick,
+  sosRequests,
+  rescueTeams,
+  isPublic = false,
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedCase, setSelectedCase] = useState(null);
@@ -34,6 +40,7 @@ const CaseIdTable = ({ caseIds, onAssignClick, sosRequests, rescueTeams }) => {
         caseData={selectedCase}
         sosRequests={sosRequests || []}
         rescueTeams={rescueTeams || []}
+        isPublic={isPublic}
       />
       <div className="font-semibold text-gray-700 mb-2 text-xl text-center">
         Case ID List

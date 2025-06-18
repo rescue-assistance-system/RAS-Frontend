@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Pagination from '../../common/Pagination';
 
-const RescueTeamsTable = ({ rescueTeams }) => {
+const RescueTeamsTable = ({ rescueTeams, isPublic = false }) => {
   const [selected, setSelected] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
