@@ -101,15 +101,17 @@ const MapComponent = forwardRef(
     // Get display name based on marker type
     const getDisplayName = (marker) => {
       if (marker.type === 'case') {
+        console.log('Case Marker:', marker);
         return (
-          marker.username ||
+          marker.sender ||
           marker.name ||
           marker.user_name ||
           `Case ${marker.caseId || marker.id}`
         );
       } else if (marker.type === 'team') {
+        console.log('Team Marker:', marker);
         return (
-          marker.team_name ||
+          marker.popup ||
           marker.teamName ||
           marker.name ||
           `Team ${marker.teamId || marker.id}`
@@ -193,7 +195,7 @@ const MapComponent = forwardRef(
 
                   {marker.type === 'case' && (marker.caseId || marker.id) && (
                     <p className="text-sm mb-2">
-                      <strong>Case ID:</strong> {marker.caseId || marker.id}
+                      <strong>Created At:</strong> {marker.createdAt || marker.id}
                     </p>
                   )}
 
